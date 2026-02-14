@@ -17,11 +17,22 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const nextPath = sanitizeRedirectPath(requestUrl.searchParams.get('next'))
+  const confirmedUrl = new URL('/auth/confirmed', requestUrl.origin)
+  confirmedUrl.searchParams.set('next', nextPath)
 
-  if (code) {
-    const supabase = createSupabaseServerClient()
-    await supabase.auth.exchangeCodeForSession(code)
+  if (!code) {
+    confirmedUrl.searchParams.set('status', 'missing_code')
+    return NextResponse.redirect(confirmedUrl)
   }
 
-  return NextResponse.redirect(new URL(nextPath, requestUrl.origin))
+  const supabase = createSupabaseServerClient()
+  const { error } = await supabase.auth.exchangeCodeForSession(code)
+
+  if (error) {
+    confirmedUrl.searchParams.set('status', 'failed')
+    return NextResponse.redirect(confirmedUrl)
+  }
+
+  confirmedUrl.searchParams.set('status', 'success')
+  return NextResponse.redirect(confirmedUrl)
 }

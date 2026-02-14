@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Archivo, Bitter } from 'next/font/google'
+import { SiteChrome } from '@/components/site/site-chrome'
 import './globals.css'
 
 const bodyFont = Archivo({
@@ -26,7 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${bodyFont.variable} ${headingFont.variable}`}>{children}</body>
+      <body className={`${bodyFont.variable} ${headingFont.variable}`}>
+        <SiteChrome>{children}</SiteChrome>
+      </body>
     </html>
   )
 }

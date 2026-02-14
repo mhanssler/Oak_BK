@@ -44,6 +44,12 @@ export default async function SecureLayout({
         </div>
       </header>
       <div className="shell-body">{children}</div>
+      <footer className="public-footer">
+        <div className="public-footer-inner">
+          <span className="hint">Secure session active. All submissions are stored with access controls.</span>
+          <span className="hint">Need help? Contact Hanssler Law support.</span>
+        </div>
+      </footer>
     </div>
   )
 }

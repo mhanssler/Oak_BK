@@ -1,5 +1,6 @@
 'use server'
 
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { env } from '@/lib/env'
 import { assertTrustedOrigin } from '@/lib/security/origin'
@@ -23,6 +24,22 @@ function toLoginPath(status: string): string {
   const params = new URLSearchParams()
   params.set('status', status)
   return `/login?${params.toString()}`
+}
+
+function inferRequestOrigin(): string {
+  const requestHeaders = headers()
+  const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
+  const proto = requestHeaders.get('x-forwarded-proto') ?? 'https'
+
+  if (!host) {
+    return env.appUrl
+  }
+
+  if (host.includes('localhost')) {
+    return `http://${host}`
+  }
+
+  return `${proto}://${host}`
 }
 
 export async function signInAction(formData: FormData): Promise<void> {
@@ -60,11 +77,12 @@ export async function signUpAction(formData: FormData): Promise<void> {
   }
 
   const supabase = createSupabaseServerClient()
+  const origin = inferRequestOrigin()
   const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: `${env.appUrl}/auth/callback`,
+      emailRedirectTo: `${origin}/auth/callback`,
     },
   })
 
@@ -72,5 +90,7 @@ export async function signUpAction(formData: FormData): Promise<void> {
     redirect(toLoginPath('signup_failed'))
   }
 
-  redirect(toLoginPath('signup_success'))
+  const params = new URLSearchParams()
+  params.set('email', email)
+  redirect(`/signup/verify?${params.toString()}`)
 }

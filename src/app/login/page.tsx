@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { signInAction, signUpAction } from '@/app/login/actions'
+import { signInAction } from '@/app/login/actions'
 
 const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
   missing_credentials: {
@@ -12,15 +12,15 @@ const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }
   },
   auth_failed: {
     tone: 'error',
-    text: 'Sign in failed. Check credentials or confirm your email.',
+    text: 'Sign in failed. Check your credentials or verify your email.',
   },
   signup_failed: {
     tone: 'error',
-    text: 'Account creation failed. Try another email or reset your password.',
+    text: 'Account creation failed. Try again from the Create Account page.',
   },
-  signup_success: {
-    tone: 'success',
-    text: 'Account created. Check email for verification before signing in.',
+  callback_failed: {
+    tone: 'error',
+    text: 'Email verification link could not be completed. Request a new verification link.',
   },
 }
 
@@ -41,12 +41,12 @@ export default function LoginPage({
 
   return (
     <main>
-      <section className="hero">
-        <h1>Secure Client Access</h1>
-        <p>Use one account per client and never share credentials across staff.</p>
+      <section className="hero" style={{ paddingBottom: '1rem' }}>
+        <h1>Welcome Back</h1>
+        <p>Sign in to continue your bankruptcy intake and complete your filing packet.</p>
       </section>
 
-      <section className="surface" style={{ padding: '1.2rem', marginBottom: '1.2rem' }}>
+      <section className="surface" style={{ padding: '1.2rem', marginBottom: '1.3rem' }}>
         <div className="stack">
           {message ? (
             <div className={`alert ${message.tone === 'error' ? 'alert-error' : 'alert-success'}`}>
@@ -72,25 +72,17 @@ export default function LoginPage({
               </div>
             </div>
 
-            <div className="row">
+            <div className="row" style={{ justifyContent: 'space-between' }}>
               <button className="button" formAction={signInAction}>
                 Sign In
               </button>
-              <button className="button-secondary" formAction={signUpAction}>
-                Create Account
-              </button>
+              <Link className="button-secondary" href="/signup">
+                New client? Create account
+              </Link>
             </div>
-            <p className="hint">
-              New passwords must be at least 12 characters. MFA is strongly recommended in Supabase
-              dashboard settings.
-            </p>
           </form>
         </div>
       </section>
-
-      <p className="hint" style={{ marginBottom: '1.8rem' }}>
-        <Link href="/">Back to overview</Link>
-      </p>
     </main>
   )
 }
