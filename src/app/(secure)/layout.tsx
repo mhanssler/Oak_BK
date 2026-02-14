@@ -33,12 +33,12 @@ export default async function SecureLayout({
     <div className="shell">
       <header className="shell-header">
         <div className="shell-header-inner">
-          <div className="row">
+          <div className="row secure-nav">
             <Link href="/dashboard" style={{ fontWeight: 700 }}>
               Oak Client Intake Portal
             </Link>
             {showAdminNav ? <Link href="/admin/cases">Admin Case Review</Link> : null}
-            <span className="hint">Signed in as {user.email}</span>
+            <span className="hint shell-user-email">Signed in as {user.email}</span>
           </div>
           <form action={signOutAction}>
             <button className="button-secondary" type="submit">

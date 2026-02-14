@@ -46,36 +46,38 @@ export default async function AdminCasesPage() {
           {cases.length === 0 ? (
             <p className="hint">No cases available.</p>
           ) : (
-            <table className="list-table">
-              <thead>
-                <tr>
-                  <th>Case ID</th>
-                  <th>Title</th>
-                  <th>Chapter</th>
-                  <th>Status</th>
-                  <th>Owner</th>
-                  <th>Updated</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cases.map((caseItem) => (
-                  <tr key={caseItem.id}>
-                    <td>{caseItem.case_ref || caseItem.id}</td>
-                    <td>{caseItem.title}</td>
-                    <td>{caseItem.chapter}</td>
-                    <td>{caseItem.status}</td>
-                    <td>{compactUserId(caseItem.user_id)}</td>
-                    <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
-                    <td>
-                      <Link className="button-secondary" href={`/admin/cases/${caseItem.id}`}>
-                        Open
-                      </Link>
-                    </td>
+            <div className="list-table-wrap">
+              <table className="list-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Title</th>
+                    <th>Chapter</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Updated</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {cases.map((caseItem) => (
+                    <tr key={caseItem.id}>
+                      <td>{caseItem.case_ref || caseItem.id}</td>
+                      <td>{caseItem.title}</td>
+                      <td>{caseItem.chapter}</td>
+                      <td>{caseItem.status}</td>
+                      <td>{compactUserId(caseItem.user_id)}</td>
+                      <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
+                      <td>
+                        <Link className="button-secondary" href={`/admin/cases/${caseItem.id}`}>
+                          Open
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>

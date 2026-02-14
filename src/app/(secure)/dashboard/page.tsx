@@ -174,39 +174,41 @@ export default async function DashboardPage({
           {cases.length === 0 ? (
             <p className="hint">No cases yet.</p>
           ) : (
-            <table className="list-table">
-              <thead>
-                <tr>
-                  <th>Case ID</th>
-                  <th>Case</th>
-                  <th>Chapter</th>
-                  <th>Status</th>
-                  <th>Updated</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cases.map((caseItem) => (
-                  <tr key={caseItem.id}>
-                    <td>{caseItem.case_ref || caseItem.id}</td>
-                    <td>{caseItem.title}</td>
-                    <td>{caseItem.chapter}</td>
-                    <td>{caseItem.status}</td>
-                    <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
-                    <td>
-                      <div className="row">
-                        <Link className="button-secondary" href={`/intake/${caseItem.id}`}>
-                          Continue Intake
-                        </Link>
-                        <Link className="button-secondary" href={`/review/${caseItem.id}`}>
-                          Review Packet
-                        </Link>
-                      </div>
-                    </td>
+            <div className="list-table-wrap">
+              <table className="list-table">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Case</th>
+                    <th>Chapter</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {cases.map((caseItem) => (
+                    <tr key={caseItem.id}>
+                      <td>{caseItem.case_ref || caseItem.id}</td>
+                      <td>{caseItem.title}</td>
+                      <td>{caseItem.chapter}</td>
+                      <td>{caseItem.status}</td>
+                      <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
+                      <td>
+                        <div className="row">
+                          <Link className="button-secondary" href={`/intake/${caseItem.id}`}>
+                            Continue Intake
+                          </Link>
+                          <Link className="button-secondary" href={`/review/${caseItem.id}`}>
+                            Review Packet
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </section>

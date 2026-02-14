@@ -26,7 +26,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <Image src="/mighty_oak.png" alt="Oak emblem" width={34} height={34} />
             <span>Oak Bankruptcy Intake</span>
           </Link>
-          <nav className="row">
+          <nav className="row public-nav">
             <Link className="button-secondary" href="/login">
               Sign In
             </Link>
@@ -45,7 +45,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <strong>Oak Bankruptcy Intake</strong>
             <span className="hint">Secure client intake and attorney-reviewed filing preparation.</span>
           </div>
-          <div className="row">
+          <div className="row public-footer-links">
             <Link className="hint" href="/login">
               Sign In
             </Link>

@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   description: 'Secure bankruptcy intake and trustee packet preparation workflow.',
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+}
+
 export default function RootLayout({
   children,
 }: {

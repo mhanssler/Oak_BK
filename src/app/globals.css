@@ -360,7 +360,14 @@ h3 {
 
 .list-table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
+}
+
+.list-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .list-table th,
@@ -423,23 +430,84 @@ h3 {
 }
 
 @media (max-width: 900px) {
-  .hero-split {
-    grid-template-columns: 1fr;
-  }
-
   .hero-emblem-wrap {
     min-height: unset;
   }
 }
 
+@media (max-width: 900px) and (orientation: portrait) {
+  .hero-split,
+  .grid-two,
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .hero-split {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .grid-two,
+  .faq-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 720px) {
+  main {
+    width: min(1120px, 100% - 1rem);
+  }
+
   .hero {
     padding-top: 1.45rem;
   }
 
   .public-header-inner,
-  .public-footer-inner {
+  .public-footer-inner,
+  .shell-header-inner {
     min-height: unset;
     padding: 0.6rem 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+
+  .public-nav,
+  .public-footer-links,
+  .secure-nav,
+  .shell-header-inner form {
+    width: 100%;
+  }
+
+  .public-nav .button,
+  .public-nav .button-secondary,
+  .shell-header-inner .button-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .secure-nav {
+    align-items: flex-start;
+  }
+
+  .shell-user-email {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .field input,
+  .field textarea,
+  .field select,
+  .button,
+  .button-secondary,
+  .button-danger {
+    font-size: 16px;
+  }
+
+  .list-table {
+    min-width: 660px;
   }
 }
