@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { ChapterGuides } from '@/components/home/chapter-guides'
 
 export default function Home() {
   return (
@@ -61,6 +62,8 @@ export default function Home() {
           </p>
         </article>
       </section>
+
+      <ChapterGuides />
 
       <section className="surface faq-wrap">
         <div className="stack">
