@@ -607,7 +607,7 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
   {
     id: 'documents',
     title: 'Document Readiness',
-    description: 'Confirm required source documents before attorney final packet review.',
+    description: 'Confirm required source documents before final legal filing review.',
     fields: [
       {
         key: 'has_paystubs',
@@ -641,7 +641,7 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
       },
       {
         key: 'attorney_notes',
-        label: 'Notes for legal team',
+        label: 'Additional notes for legal team',
         type: 'textarea',
         placeholder: 'Anything the trustee should know before filing...',
       },

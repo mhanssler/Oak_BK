@@ -22,11 +22,23 @@ Secure, account-driven bankruptcy intake application for attorney-guided trustee
    ```bash
    npm install
    ```
-4. Run database migration SQL from `supabase/migrations/202602140001_initial_schema.sql` in Supabase SQL editor.
+4. Run database migration SQL in order:
+   - `supabase/migrations/202602140001_initial_schema.sql`
+   - `supabase/migrations/202602140002_case_ref_admin_access.sql`
 5. Start app:
    ```bash
    npm run dev
    ```
+
+## Admin Account Setup
+- Admin authorization checks `app_metadata.role = "admin"` (not user-editable metadata).
+- Set admin role with Supabase Auth Admin API or SQL:
+  ```sql
+  update auth.users
+  set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+  where email = 'admin@example.com';
+  ```
+- Ask the admin user to sign out/in after role changes so JWT claims refresh.
 
 ## Security Workflow (Required)
 Run these before PR/merge:
@@ -55,7 +67,7 @@ npm run security:scan
 - `AGENTS.md` contains secret-safety and SOX-style controls.
 - `.gitignore` blocks env files and common private key material.
 - Audit table captures key case events.
-- RLS policies restrict all data access to authenticated owner.
+- RLS policies restrict case data access to case owner or authorized admin role.
 
 ## Current Limitation
 The local `Reference/Requirements..gdoc` file is a cloud placeholder and is not readable from this environment. Export that document as `.md` or `.txt` into the repo to map attorney language directly into final questionnaire wording and trustee packet format.

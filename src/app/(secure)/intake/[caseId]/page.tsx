@@ -5,6 +5,7 @@ import {
   asBoolean,
   asNumber,
   formatUsd,
+  recommendChapterFromIntake,
   summarizeCaliforniaMeansTest,
 } from '@/lib/bankruptcy/california'
 import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
@@ -271,13 +272,21 @@ export default async function IntakeCasePage({
   const exemptionSystem =
     typeof selectedExemption === 'string' ? CALIFORNIA_EXEMPTION_SYSTEMS[selectedExemption] : null
 
+  const chapterRecommendation = recommendChapterFromIntake({
+    selectedChapter: chapter,
+    meansSummary,
+    businessInterest: asBoolean(readField('business_interest')),
+    securedDebtTotal: asNumber(readField('secured_debt_total')),
+    ownsPrimaryResidence: asBoolean(readField('owns_primary_residence')),
+  })
+
   return (
     <main>
       <section className="hero">
         <h1>{bankruptcyCase.title}</h1>
         <p>
-          Chapter {bankruptcyCase.chapter} intake. Complete every section to generate a trustee-ready
-          packet for attorney review.
+          Case ID: {bankruptcyCase.case_ref || bankruptcyCase.id}. Complete each section and we will screen the likely chapter
+          recommendation for legal team review.
         </p>
       </section>
 
@@ -346,6 +355,16 @@ export default async function IntakeCasePage({
                     exemptions).
                   </span>
                 )}
+              </div>
+            </div>
+            <div className="surface" style={{ padding: '0.75rem' }}>
+              <div className="stack" style={{ gap: '0.35rem' }}>
+                <strong>Screened Chapter Recommendation: {chapterRecommendation.label}</strong>
+                <span className="hint">{chapterRecommendation.rationale}</span>
+                <span className="hint">
+                  Recommendation is automated screening only. Final chapter determination is made by
+                  your attorney.
+                </span>
               </div>
             </div>
           </div>
@@ -482,3 +501,4 @@ export default async function IntakeCasePage({
     </main>
   )
 }
+

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { isAdminUser } from '@/lib/auth/roles'
 import { assertTrustedOrigin } from '@/lib/security/origin'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
@@ -26,14 +27,17 @@ export default async function SecureLayout({
     redirect('/login')
   }
 
+  const showAdminNav = isAdminUser(user)
+
   return (
     <div className="shell">
       <header className="shell-header">
         <div className="shell-header-inner">
           <div className="row">
             <Link href="/dashboard" style={{ fontWeight: 700 }}>
-              Hanssler Law Intake
+              Oak Client Intake Portal
             </Link>
+            {showAdminNav ? <Link href="/admin/cases">Admin Case Review</Link> : null}
             <span className="hint">Signed in as {user.email}</span>
           </div>
           <form action={signOutAction}>

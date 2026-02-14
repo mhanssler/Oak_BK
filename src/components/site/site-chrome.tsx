@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
-const SECURE_PATH_PREFIXES = ['/dashboard', '/intake', '/review']
+const SECURE_PATH_PREFIXES = ['/dashboard', '/intake', '/review', '/admin']
 
 function isSecurePath(pathname: string): boolean {
   return SECURE_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix))
@@ -23,7 +23,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <header className="public-header">
         <div className="public-header-inner">
           <Link href="/" className="brand-lockup">
-            <Image src="/oak-emblem.svg" alt="Oak emblem" width={34} height={34} />
+            <Image src="/mighty_oak.png" alt="Oak emblem" width={34} height={34} />
             <span>Oak Bankruptcy Intake</span>
           </Link>
           <nav className="row">

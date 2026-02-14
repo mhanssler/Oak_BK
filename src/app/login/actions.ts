@@ -20,6 +20,13 @@ function normalizePassword(raw: FormDataEntryValue | null): string {
   return raw
 }
 
+function normalizeFullName(raw: FormDataEntryValue | null): string {
+  if (typeof raw !== 'string') {
+    return ''
+  }
+  return raw.trim().replace(/\s+/g, ' ')
+}
+
 function toLoginPath(status: string): string {
   const params = new URLSearchParams()
   params.set('status', status)
@@ -67,8 +74,9 @@ export async function signUpAction(formData: FormData): Promise<void> {
 
   const email = normalizeEmail(formData.get('email'))
   const password = normalizePassword(formData.get('password'))
+  const fullName = normalizeFullName(formData.get('full_name'))
 
-  if (!email || !password) {
+  if (!email || !password || !fullName) {
     redirect(toLoginPath('missing_credentials'))
   }
 
@@ -83,6 +91,9 @@ export async function signUpAction(formData: FormData): Promise<void> {
     password,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        full_name: fullName,
+      },
     },
   })
 

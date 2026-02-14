@@ -3,7 +3,7 @@
 ## Phase 1: Conversion And Trust
 1. Replace static contact intake with authenticated client portal entry points.
 2. Add plain-English process timeline (Consultation -> Intake -> Review -> Filing -> Trustee Meeting).
-3. Publish attorney-reviewed FAQ for Chapter 7 and Chapter 13 eligibility.
+3. Publish plain-English FAQ for Chapter 7/11/12/13 with examples of when each chapter is typically used.
 4. Add transparent pricing/disclosure language that is jurisdiction-safe.
 
 ## Phase 2: Intake Integration

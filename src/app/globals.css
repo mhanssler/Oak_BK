@@ -142,6 +142,7 @@ h3 {
   width: min(100%, 360px);
   height: auto;
   border-radius: 24px;
+  object-fit: cover;
 }
 
 .feature-card {
@@ -155,6 +156,35 @@ h3 {
 .feature-card p {
   margin: 0;
   color: #3f5860;
+}
+
+.faq-wrap {
+  padding: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.faq-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.faq-item {
+  border: 1px solid #d9e5e2;
+  border-radius: 12px;
+  padding: 0.85rem;
+  background: #fbfdfc;
+}
+
+.faq-item h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.08rem;
+  color: #0f4756;
+}
+
+.faq-item p {
+  margin: 0;
+  color: #46656f;
 }
 
 .surface {

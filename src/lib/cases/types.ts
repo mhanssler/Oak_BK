@@ -1,5 +1,6 @@
 export interface BankruptcyCase {
   id: string
+  case_ref: string | null
   user_id: string
   title: string
   chapter: string

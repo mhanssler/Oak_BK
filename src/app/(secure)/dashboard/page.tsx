@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { getUserDisplayName } from '@/lib/auth/roles'
+import { createCaseReference } from '@/lib/cases/case-ref'
 import type { BankruptcyCase } from '@/lib/cases/types'
 import { assertTrustedOrigin } from '@/lib/security/origin'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
@@ -43,22 +45,40 @@ async function createCaseAction(formData: FormData) {
   const chapter = normalizeText(formData.get('chapter'))
   const filingState = normalizeText(formData.get('filing_state')).slice(0, 64)
   const filingCounty = normalizeText(formData.get('filing_county')).slice(0, 64)
+  const accountName = getUserDisplayName(user)
 
   if (!title || !CHAPTER_OPTIONS.includes(chapter as (typeof CHAPTER_OPTIONS)[number])) {
     redirect('/dashboard?status=bad_case')
   }
 
-  const { data: createdCase, error: insertError } = await supabase
-    .from('bankruptcy_cases')
-    .insert({
-      user_id: user.id,
-      title,
-      chapter,
-      filing_state: filingState || null,
-      filing_county: filingCounty || null,
-    })
-    .select('id')
-    .single()
+  let createdCase: { id: string; case_ref: string } | null = null
+  let insertError: { code?: string } | null = null
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const caseRef = createCaseReference(accountName || title)
+    const insertResult = await supabase
+      .from('bankruptcy_cases')
+      .insert({
+        user_id: user.id,
+        case_ref: caseRef,
+        title,
+        chapter,
+        filing_state: filingState || null,
+        filing_county: filingCounty || null,
+      })
+      .select('id, case_ref')
+      .single()
+
+    if (!insertResult.error && insertResult.data) {
+      createdCase = insertResult.data
+      insertError = null
+      break
+    }
+
+    insertError = { code: insertResult.error?.code }
+    if (insertResult.error?.code !== '23505') {
+      break
+    }
+  }
 
   if (insertError || !createdCase) {
     redirect('/dashboard?status=create_failed')
@@ -68,7 +88,7 @@ async function createCaseAction(formData: FormData) {
     case_id: createdCase.id,
     user_id: user.id,
     action: 'case_created',
-    metadata: { source: 'dashboard' },
+    metadata: { source: 'dashboard', case_ref: createdCase.case_ref },
   })
 
   redirect(`/intake/${createdCase.id}?step=filing-plan&status=created`)
@@ -102,8 +122,8 @@ export default async function DashboardPage({
   return (
     <main>
       <section className="hero">
-        <h1>Case Dashboard</h1>
-        <p>Create a case, complete all sections, and send attorney-ready packet data to review.</p>
+        <h1>My Cases</h1>
+        <p>Start a case, complete each section, and submit your intake package for attorney review.</p>
       </section>
 
       <section className="surface" style={{ padding: '1.2rem', marginBottom: '1.2rem' }}>
@@ -118,7 +138,7 @@ export default async function DashboardPage({
           <form action={createCaseAction} className="stack">
             <div className="grid-two">
               <div className="field">
-                <label htmlFor="title">Client/case title</label>
+                <label htmlFor="title">Case title</label>
                 <input id="title" name="title" required placeholder="Jane Doe - 2026 filing" />
               </div>
               <div className="field">
@@ -129,6 +149,9 @@ export default async function DashboardPage({
                   <option value="11">Chapter 11</option>
                   <option value="12">Chapter 12</option>
                 </select>
+                <span className="hint">
+                  This is your initial selection. Intake screening may recommend a different chapter.
+                </span>
               </div>
               <div className="field">
                 <label htmlFor="filing_state">State</label>
@@ -157,6 +180,7 @@ export default async function DashboardPage({
             <table className="list-table">
               <thead>
                 <tr>
+                  <th>Case ID</th>
                   <th>Case</th>
                   <th>Chapter</th>
                   <th>Status</th>
@@ -167,6 +191,7 @@ export default async function DashboardPage({
               <tbody>
                 {cases.map((caseItem) => (
                   <tr key={caseItem.id}>
+                    <td>{caseItem.case_ref || caseItem.id}</td>
                     <td>{caseItem.title}</td>
                     <td>{caseItem.chapter}</td>
                     <td>{caseItem.status}</td>

@@ -1,4 +1,5 @@
 import { QUESTIONNAIRE_STEPS } from '@/lib/questionnaire/steps'
+import { isAdminUser } from '@/lib/auth/roles'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 export async function GET(_request: Request, { params }: { params: { caseId: string } }) {
@@ -12,12 +13,10 @@ export async function GET(_request: Request, { params }: { params: { caseId: str
     return new Response('Unauthorized', { status: 401 })
   }
 
-  const { data: caseRecord } = await supabase
-    .from('bankruptcy_cases')
-    .select('*')
-    .eq('id', caseId)
-    .eq('user_id', user.id)
-    .maybeSingle()
+  const caseQuery = supabase.from('bankruptcy_cases').select('*').eq('id', caseId)
+  const { data: caseRecord } = isAdminUser(user)
+    ? await caseQuery.maybeSingle()
+    : await caseQuery.eq('user_id', user.id).maybeSingle()
 
   if (!caseRecord) {
     return new Response('Not found', { status: 404 })
@@ -44,6 +43,7 @@ export async function GET(_request: Request, { params }: { params: { caseId: str
     generated_at: new Date().toISOString(),
     case: {
       id: caseRecord.id,
+      case_ref: caseRecord.case_ref,
       title: caseRecord.title,
       chapter: caseRecord.chapter,
       status: caseRecord.status,

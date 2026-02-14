@@ -64,6 +64,27 @@ export interface MeansTestSummary {
   belowMedian: boolean | null
 }
 
+export type ChapterRecommendationCode =
+  | 'chapter7'
+  | 'chapter13'
+  | 'chapter11'
+  | 'chapter12'
+  | 'insufficient_data'
+
+export interface ChapterRecommendation {
+  code: ChapterRecommendationCode
+  label: string
+  rationale: string
+}
+
+export interface ChapterRecommendationInput {
+  selectedChapter: string | null
+  meansSummary: MeansTestSummary
+  businessInterest: boolean | null
+  securedDebtTotal: number | null
+  ownsPrimaryResidence: boolean | null
+}
+
 function average(values: number[]): number {
   if (values.length === 0) {
     return 0
@@ -207,4 +228,92 @@ export function formatUsd(value: number | null): string {
     currency: 'USD',
     maximumFractionDigits: 2,
   }).format(value)
+}
+
+export function recommendChapterFromIntake(input: ChapterRecommendationInput): ChapterRecommendation {
+  const selectedChapter = input.selectedChapter
+  const meansStatus = input.meansSummary.status
+  const hasBusinessFlag = input.businessInterest === true
+  const hasSecuredDebt = (input.securedDebtTotal || 0) > 0
+  const hasHome = input.ownsPrimaryResidence === true
+
+  if (selectedChapter === '12') {
+    return {
+      code: 'chapter12',
+      label: 'Chapter 12',
+      rationale: 'Selected Chapter 12 track. Confirm family farmer/fisher eligibility with counsel.',
+    }
+  }
+
+  if (selectedChapter === '11') {
+    return {
+      code: 'chapter11',
+      label: 'Chapter 11',
+      rationale: 'Selected Chapter 11 track. Confirm debt structure and reorganization fit with counsel.',
+    }
+  }
+
+  if (hasBusinessFlag && ((input.securedDebtTotal || 0) > 800000 || selectedChapter === '11')) {
+    return {
+      code: 'chapter11',
+      label: 'Chapter 11',
+      rationale:
+        'Business interest plus debt profile suggests Chapter 11 evaluation before final filing strategy.',
+    }
+  }
+
+  if (meansStatus === 'chapter7_below_median' || meansStatus === 'chapter7_exempt') {
+    return {
+      code: 'chapter7',
+      label: 'Chapter 7',
+      rationale: 'Means-test screening indicates a likely Chapter 7 pathway pending attorney confirmation.',
+    }
+  }
+
+  if (meansStatus === 'chapter7_above_median' || meansStatus === 'chapter13_60_month') {
+    return {
+      code: 'chapter13',
+      label: 'Chapter 13',
+      rationale:
+        'Income screening indicates a likely Chapter 13 pathway with repayment-plan feasibility review.',
+    }
+  }
+
+  if (meansStatus === 'chapter13_36_month') {
+    if (hasSecuredDebt || hasHome) {
+      return {
+        code: 'chapter13',
+        label: 'Chapter 13',
+        rationale: 'Debt and property profile indicate a likely Chapter 13 plan-based approach.',
+      }
+    }
+
+    return {
+      code: 'chapter7',
+      label: 'Chapter 7',
+      rationale: 'No clear plan-driven trigger found; Chapter 7 is likely but must be confirmed by counsel.',
+    }
+  }
+
+  if (selectedChapter === '7') {
+    return {
+      code: 'chapter7',
+      label: 'Chapter 7',
+      rationale: 'Using selected Chapter 7 preference until enough intake data is available for screening.',
+    }
+  }
+
+  if (selectedChapter === '13') {
+    return {
+      code: 'chapter13',
+      label: 'Chapter 13',
+      rationale: 'Using selected Chapter 13 preference until enough intake data is available for screening.',
+    }
+  }
+
+  return {
+    code: 'insufficient_data',
+    label: 'Insufficient Data',
+    rationale: 'Complete income, debt, and household sections to generate a chapter recommendation.',
+  }
 }

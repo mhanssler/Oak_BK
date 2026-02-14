@@ -5,6 +5,7 @@ import {
   asBoolean,
   asNumber,
   formatUsd,
+  recommendChapterFromIntake,
   summarizeCaliforniaMeansTest,
 } from '@/lib/bankruptcy/california'
 import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
@@ -171,6 +172,14 @@ export default async function ReviewCasePage({
   const exemptionSystem =
     typeof exemptionValue === 'string' ? CALIFORNIA_EXEMPTION_SYSTEMS[exemptionValue] : null
 
+  const chapterRecommendation = recommendChapterFromIntake({
+    selectedChapter: chapter,
+    meansSummary,
+    businessInterest: asBoolean(readField('business_interest')),
+    securedDebtTotal: asNumber(readField('secured_debt_total')),
+    ownsPrimaryResidence: asBoolean(readField('owns_primary_residence')),
+  })
+
   const complianceChecks = [
     {
       label: 'Pre-filing credit counseling complete',
@@ -196,8 +205,8 @@ export default async function ReviewCasePage({
       <section className="hero">
         <h1>Review Packet</h1>
         <p>
-          Confirm every section before attorney submission. Missing required steps block final
-          submission.
+          Confirm your answers before legal-team submission. Missing required steps block final
+          completion.
         </p>
       </section>
 
@@ -212,7 +221,8 @@ export default async function ReviewCasePage({
             <div className="stack" style={{ gap: '0.3rem' }}>
               <h2 style={{ margin: 0 }}>{bankruptcyCase.title}</h2>
               <span className="hint">
-                Status: {bankruptcyCase.status} | Chapter {bankruptcyCase.chapter}
+                Case ID: {bankruptcyCase.case_ref || bankruptcyCase.id} | Status: {bankruptcyCase.status} | Selected Chapter{' '}
+                {bankruptcyCase.chapter}
               </span>
             </div>
             <div className="row">
@@ -261,6 +271,15 @@ export default async function ReviewCasePage({
                 )}
               </div>
             </div>
+            <div className="surface" style={{ padding: '0.8rem' }}>
+              <div className="stack" style={{ gap: '0.35rem' }}>
+                <strong>Screened Chapter Recommendation: {chapterRecommendation.label}</strong>
+                <span className="hint">{chapterRecommendation.rationale}</span>
+                <span className="hint">
+                  Automated recommendation only. Your attorney determines the final chapter strategy.
+                </span>
+              </div>
+            </div>
           </div>
 
           <form action={submitCaseAction}>
@@ -299,3 +318,4 @@ export default async function ReviewCasePage({
     </main>
   )
 }
+

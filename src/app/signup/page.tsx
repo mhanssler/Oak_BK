@@ -21,6 +21,17 @@ export default function SignupPage() {
           <form action={signUpAction} className="stack">
             <div className="grid-two">
               <div className="field">
+                <label htmlFor="full_name">Full legal name</label>
+                <input
+                  id="full_name"
+                  name="full_name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Morgan Hanssler"
+                  required
+                />
+              </div>
+              <div className="field">
                 <label htmlFor="email">Email</label>
                 <input id="email" name="email" type="email" autoComplete="email" required />
               </div>
