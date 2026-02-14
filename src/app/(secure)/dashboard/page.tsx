@@ -149,9 +149,6 @@ export default async function DashboardPage({
                   <option value="11">Chapter 11</option>
                   <option value="12">Chapter 12</option>
                 </select>
-                <span className="hint">
-                  This is your initial selection. Intake screening may recommend a different chapter.
-                </span>
               </div>
               <div className="field">
                 <label htmlFor="filing_state">State</label>

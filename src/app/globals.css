@@ -147,6 +147,9 @@ h3 {
 
 .feature-card {
   padding: 1rem;
+  display: grid;
+  align-content: start;
+  min-height: 150px;
 }
 
 .feature-card h2 {
@@ -174,6 +177,9 @@ h3 {
   border-radius: 12px;
   padding: 0.85rem;
   background: #fbfdfc;
+  display: grid;
+  align-content: start;
+  min-height: 148px;
 }
 
 .faq-item h3 {

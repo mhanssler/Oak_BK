@@ -10,6 +10,7 @@ import {
 } from '@/lib/bankruptcy/california'
 import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
 import { formatFieldValue } from '@/lib/questionnaire/format'
+import { getResponsePayload, readResponseField } from '@/lib/questionnaire/payload'
 import { QUESTIONNAIRE_STEPS } from '@/lib/questionnaire/steps'
 import { assertTrustedOrigin } from '@/lib/security/origin'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
@@ -136,15 +137,7 @@ export default async function ReviewCasePage({
   const responseMap = new Map<string, CaseResponse>(responses.map((entry) => [entry.step_id, entry]))
   const missingSteps = QUESTIONNAIRE_STEPS.filter((step) => !responseMap.get(step.id)?.completed)
 
-  const readField = (fieldKey: string): unknown => {
-    for (const response of responses) {
-      const payload = response.payload as Record<string, unknown>
-      if (fieldKey in payload) {
-        return payload[fieldKey]
-      }
-    }
-    return null
-  }
+  const readField = (fieldKey: string): unknown => readResponseField(responses, fieldKey)
 
   const chapterFromPayload = readField('chapter')
   const chapter =
@@ -295,7 +288,7 @@ export default async function ReviewCasePage({
         <div className="stack">
           {QUESTIONNAIRE_STEPS.map((step) => {
             const response = responseMap.get(step.id)
-            const payload = (response?.payload || {}) as Record<string, unknown>
+            const payload = getResponsePayload(response)
             return (
               <article key={step.id} style={{ borderBottom: '1px solid #dce8e5', paddingBottom: '1rem' }}>
                 <div className="row" style={{ justifyContent: 'space-between' }}>

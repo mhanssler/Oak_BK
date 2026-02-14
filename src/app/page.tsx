@@ -37,28 +37,27 @@ export default function Home() {
         <article className="surface feature-card">
           <h2>Guided Client Intake</h2>
           <p>
-            Debtor profile, income history, assets, debts, expenses, disclosures, counseling checks, and
-            document readiness in one secure flow built for clients.
+            Complete your profile, income, assets, debts, expenses, and document checklist in one secure
+            guided flow.
           </p>
         </article>
         <article className="surface feature-card">
           <h2>Chapter Screening Logic</h2>
           <p>
-            We evaluate your intake details against California means-test and exemption checkpoints to
-            screen for likely chapter fit.
+            Your answers are screened against key means-test and exemption checkpoints to estimate chapter
+            fit.
           </p>
         </article>
         <article className="surface feature-card">
           <h2>Attorney Review Packet</h2>
           <p>
-            Every completed section is assembled into a structured packet for legal review before filing.
+            Completed sections are assembled into a structured packet for legal review before filing.
           </p>
         </article>
         <article className="surface feature-card">
           <h2>Case Tracking</h2>
           <p>
-            Each case receives a unique case ID so your information can be tracked clearly from intake
-            through filing preparation.
+            Every case gets a unique case ID for clear tracking from intake through filing preparation.
           </p>
         </article>
       </section>

@@ -1,4 +1,5 @@
 import { QUESTIONNAIRE_STEPS } from '@/lib/questionnaire/steps'
+import { getResponsePayload } from '@/lib/questionnaire/payload'
 import { isAdminUser } from '@/lib/auth/roles'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
@@ -33,10 +34,18 @@ export async function GET(_request: Request, { params }: { params: { caseId: str
   >(
     ((responsesRaw || []) as Array<{
       step_id: string
-      payload: Record<string, unknown>
+      payload: unknown
       completed: boolean
       updated_at: string | null
-    }>).map((row) => [row.step_id, row]),
+    }>).map((row) => [
+      row.step_id,
+      {
+        step_id: row.step_id,
+        payload: getResponsePayload({ payload: row.payload }),
+        completed: row.completed,
+        updated_at: row.updated_at,
+      },
+    ]),
   )
   const packet = {
     packet_version: '2026.02.14',

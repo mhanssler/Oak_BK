@@ -16,6 +16,7 @@ import {
   getQuestionnaireStep,
   type QuestionnaireField,
 } from '@/lib/questionnaire/steps'
+import { getResponsePayload, readResponseField } from '@/lib/questionnaire/payload'
 import { assertTrustedOrigin } from '@/lib/security/origin'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { validateStepForm } from '@/lib/questionnaire/validation'
@@ -222,19 +223,11 @@ export default async function IntakeCasePage({
 
   const responses = (responsesRaw || []) as CaseResponse[]
   const responseMap = new Map<string, CaseResponse>(responses.map((entry) => [entry.step_id, entry]))
-  const currentPayload = (responseMap.get(step.id)?.payload || {}) as Record<string, unknown>
+  const currentPayload = getResponsePayload(responseMap.get(step.id))
   const completedCount = QUESTIONNAIRE_STEPS.filter((item) => responseMap.get(item.id)?.completed).length
   const progress = Math.round((completedCount / QUESTIONNAIRE_STEPS.length) * 100)
 
-  const readField = (fieldKey: string): unknown => {
-    for (const response of responses) {
-      const payload = response.payload as Record<string, unknown>
-      if (fieldKey in payload) {
-        return payload[fieldKey]
-      }
-    }
-    return null
-  }
+  const readField = (fieldKey: string): unknown => readResponseField(responses, fieldKey)
 
   const chapterFromPayload = readField('chapter')
   const chapter =
@@ -285,8 +278,8 @@ export default async function IntakeCasePage({
       <section className="hero">
         <h1>{bankruptcyCase.title}</h1>
         <p>
-          Case ID: {bankruptcyCase.case_ref || bankruptcyCase.id}. Complete each section and we will screen the likely chapter
-          recommendation for legal team review.
+          Case ID: {bankruptcyCase.case_ref || bankruptcyCase.id}. Complete each section and we will
+          screen the likely chapter path for attorney review.
         </p>
       </section>
 

@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "security:scan:tracked": "powershell -ExecutionPolicy Bypass -File scripts/security/scan-tracked-secrets.ps1",
     "security:scan:history": "powershell -ExecutionPolicy Bypass -File scripts/security/scan-history-secrets.ps1",
@@ -26,6 +28,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "13.5.6",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^1.6.0"
   }
 }
