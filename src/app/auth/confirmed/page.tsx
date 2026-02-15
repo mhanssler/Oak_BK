@@ -32,13 +32,14 @@ function safeNextPath(path: string | null): string {
   return path
 }
 
-export default function AuthConfirmedPage({
+export default async function AuthConfirmedPage({
   searchParams,
 }: {
-  searchParams: { status?: string | string[]; next?: string | string[] }
+  searchParams: Promise<{ status?: string | string[]; next?: string | string[] }>
 }) {
-  const statusCode = readSingle(searchParams.status) || 'success'
-  const nextPath = safeNextPath(readSingle(searchParams.next))
+  const resolvedSearchParams = await searchParams
+  const statusCode = readSingle(resolvedSearchParams.status) || 'success'
+  const nextPath = safeNextPath(readSingle(resolvedSearchParams.next))
   const status = STATUS_MESSAGE[statusCode] || STATUS_MESSAGE.success
 
   return (

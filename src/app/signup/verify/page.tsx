@@ -7,12 +7,13 @@ function readSingle(value: string | string[] | undefined): string | null {
   return Array.isArray(value) ? value[0] : value
 }
 
-export default function SignupVerifyPage({
+export default async function SignupVerifyPage({
   searchParams,
 }: {
-  searchParams: { email?: string | string[] }
+  searchParams: Promise<{ email?: string | string[] }>
 }) {
-  const email = readSingle(searchParams.email)
+  const resolvedSearchParams = await searchParams
+  const email = readSingle(resolvedSearchParams.email)
 
   return (
     <main>

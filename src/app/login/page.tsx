@@ -31,12 +31,13 @@ function readSingle(value: string | string[] | undefined): string | null {
   return Array.isArray(value) ? value[0] : value
 }
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { status?: string | string[] }
+  searchParams: Promise<{ status?: string | string[] }>
 }) {
-  const status = readSingle(searchParams.status)
+  const resolvedSearchParams = await searchParams
+  const status = readSingle(resolvedSearchParams.status)
   const message = status ? STATUS_MESSAGE[status] : null
 
   return (

@@ -97,9 +97,10 @@ async function createCaseAction(formData: FormData) {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { status?: string | string[] }
+  searchParams: Promise<{ status?: string | string[] }>
 }) {
-  const statusCode = readSingle(searchParams.status)
+  const resolvedSearchParams = await searchParams
+  const statusCode = readSingle(resolvedSearchParams.status)
   const status = statusCode ? STATUS_MESSAGE[statusCode] : null
 
   const supabase = await createSupabaseServerClient()
