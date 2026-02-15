@@ -12,7 +12,8 @@ function isSecurePath(pathname: string): boolean {
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const hidePublicChrome = isSecurePath(pathname)
+  const safePathname = typeof pathname === 'string' ? pathname : ''
+  const hidePublicChrome = isSecurePath(safePathname)
 
   if (hidePublicChrome) {
     return <>{children}</>
