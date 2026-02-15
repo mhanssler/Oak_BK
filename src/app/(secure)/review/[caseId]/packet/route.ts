@@ -3,8 +3,8 @@ import { getResponsePayload } from '@/lib/questionnaire/payload'
 import { isAdminUser } from '@/lib/auth/roles'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-export async function GET(_request: Request, { params }: { params: { caseId: string } }) {
-  const caseId = params.caseId
+export async function GET(_request: Request, { params }: { params: Promise<{ caseId: string }> }) {
+  const { caseId } = await params
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },

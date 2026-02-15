@@ -99,11 +99,12 @@ export default async function ReviewCasePage({
   params,
   searchParams,
 }: {
-  params: { caseId: string }
-  searchParams: SearchParams
+  params: Promise<{ caseId: string }>
+  searchParams: Promise<SearchParams>
 }) {
-  const caseId = params.caseId
-  const statusCode = readSingle(searchParams.status)
+  const { caseId } = await params
+  const resolvedSearchParams = await searchParams
+  const statusCode = readSingle(resolvedSearchParams.status)
   const status = statusCode ? STATUS_MESSAGE[statusCode] : null
 
   const supabase = await createSupabaseServerClient()

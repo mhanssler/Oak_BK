@@ -18,9 +18,9 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 export default async function AdminCaseDetailPage({
   params,
 }: {
-  params: { caseId: string }
+  params: Promise<{ caseId: string }>
 }) {
-  const caseId = params.caseId
+  const { caseId } = await params
   const supabase = await createSupabaseServerClient()
   const {
     data: { user },
