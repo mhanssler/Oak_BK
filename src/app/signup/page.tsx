@@ -1,7 +1,37 @@
 import Link from 'next/link'
 import { signUpAction } from '@/app/login/actions'
 
-export default function SignupPage() {
+const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
+  missing_credentials: {
+    tone: 'error',
+    text: 'Please enter your full legal name, email, and password.',
+  },
+  weak_password: {
+    tone: 'error',
+    text: 'Use a password with at least 12 characters.',
+  },
+  signup_failed: {
+    tone: 'error',
+    text: 'Account creation failed. Please try again.',
+  },
+}
+
+function readSingle(value: string | string[] | undefined): string | null {
+  if (!value) {
+    return null
+  }
+  return Array.isArray(value) ? value[0] : value
+}
+
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string | string[] }>
+}) {
+  const resolvedSearchParams = await searchParams
+  const status = readSingle(resolvedSearchParams.status)
+  const message = status ? STATUS_MESSAGE[status] : null
+
   return (
     <main>
       <section className="hero" style={{ paddingBottom: '1rem' }}>
@@ -13,6 +43,12 @@ export default function SignupPage() {
 
       <section className="surface" style={{ padding: '1.25rem', marginBottom: '1.3rem' }}>
         <div className="stack">
+          {message ? (
+            <div className={`alert ${message.tone === 'error' ? 'alert-error' : 'alert-success'}`}>
+              {message.text}
+            </div>
+          ) : null}
+
           <div className="alert alert-success">
             Verification emails may land in spam at first. Mark as safe so future case updates arrive in
             your inbox.

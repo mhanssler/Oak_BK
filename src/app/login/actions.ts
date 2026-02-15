@@ -33,6 +33,12 @@ function toLoginPath(status: string): string {
   return `/login?${params.toString()}`
 }
 
+function toSignupPath(status: string): string {
+  const params = new URLSearchParams()
+  params.set('status', status)
+  return `/signup?${params.toString()}`
+}
+
 async function inferRequestOrigin(): Promise<string> {
   const requestHeaders = await headers()
   const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
@@ -77,11 +83,11 @@ export async function signUpAction(formData: FormData): Promise<void> {
   const fullName = normalizeFullName(formData.get('full_name'))
 
   if (!email || !password || !fullName) {
-    redirect(toLoginPath('missing_credentials'))
+    redirect(toSignupPath('missing_credentials'))
   }
 
   if (password.length < 12) {
-    redirect(toLoginPath('weak_password'))
+    redirect(toSignupPath('weak_password'))
   }
 
   const supabase = await createSupabaseServerClient()
@@ -98,7 +104,12 @@ export async function signUpAction(formData: FormData): Promise<void> {
   })
 
   if (error) {
-    redirect(toLoginPath('signup_failed'))
+    const message = `${error.message || ''}`.toLowerCase()
+    const code = `${error.code || ''}`.toLowerCase()
+    if (message.includes('already') || code.includes('user_already_exists')) {
+      redirect(toLoginPath('account_exists'))
+    }
+    redirect(toSignupPath('signup_failed'))
   }
 
   const params = new URLSearchParams()

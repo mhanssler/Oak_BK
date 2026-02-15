@@ -18,6 +18,10 @@ const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }
     tone: 'error',
     text: 'Account creation failed. Try again from the Create Account page.',
   },
+  account_exists: {
+    tone: 'success',
+    text: 'This email is already registered. Sign in to continue your intake.',
+  },
   callback_failed: {
     tone: 'error',
     text: 'Email verification link could not be completed. Request a new verification link.',

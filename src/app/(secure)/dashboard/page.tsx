@@ -11,7 +11,10 @@ const CHAPTER_OPTIONS = ['7', '13', '11', '12'] as const
 const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
   created: { tone: 'success', text: 'New case created.' },
   bad_case: { tone: 'error', text: 'Case title and chapter are required.' },
-  create_failed: { tone: 'error', text: 'Unable to create case. Try again.' },
+  create_failed: {
+    tone: 'error',
+    text: 'Unable to create the case right now. Please try again in a few seconds.',
+  },
 }
 
 function readSingle(value: string | string[] | undefined): string | null {
@@ -28,6 +31,25 @@ function normalizeText(raw: FormDataEntryValue | null): string {
   return raw.trim()
 }
 
+function buildDefaultCaseTitle(name: string): string {
+  const base = name.trim().length > 0 ? name.trim() : 'Client'
+  const today = new Date().toISOString().slice(0, 10)
+  return `${base} - Intake ${today}`
+}
+
+function isMissingCaseRefColumnError(error: { code?: string; message?: string } | null): boolean {
+  if (!error) {
+    return false
+  }
+  const code = `${error.code || ''}`.toLowerCase()
+  const message = `${error.message || ''}`.toLowerCase()
+  return (
+    code.includes('pgrst204') ||
+    code.includes('42703') ||
+    (message.includes('case_ref') && message.includes('column'))
+  )
+}
+
 async function createCaseAction(formData: FormData) {
   'use server'
 
@@ -41,41 +63,71 @@ async function createCaseAction(formData: FormData) {
     redirect('/login')
   }
 
-  const title = normalizeText(formData.get('title')).slice(0, 120)
-  const chapter = normalizeText(formData.get('chapter'))
+  const requestedTitle = normalizeText(formData.get('title')).slice(0, 120)
+  const chapterSelection = normalizeText(formData.get('chapter'))
   const filingState = normalizeText(formData.get('filing_state')).slice(0, 64)
   const filingCounty = normalizeText(formData.get('filing_county')).slice(0, 64)
   const accountName = getUserDisplayName(user)
+  const title = requestedTitle || buildDefaultCaseTitle(accountName || '')
+  const chapter = CHAPTER_OPTIONS.includes(chapterSelection as (typeof CHAPTER_OPTIONS)[number])
+    ? chapterSelection
+    : '7'
 
-  if (!title || !CHAPTER_OPTIONS.includes(chapter as (typeof CHAPTER_OPTIONS)[number])) {
-    redirect('/dashboard?status=bad_case')
-  }
-
-  let createdCase: { id: string; case_ref: string } | null = null
-  let insertError: { code?: string } | null = null
+  let createdCase: { id: string; case_ref: string | null } | null = null
+  let insertError: { code?: string; message?: string } | null = null
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const caseRef = createCaseReference(accountName || title)
-    const insertResult = await supabase
+    const baseCaseInsert = {
+      user_id: user.id,
+      title,
+      chapter,
+      filing_state: filingState || null,
+      filing_county: filingCounty || null,
+    }
+
+    const insertWithRefResult = await supabase
       .from('bankruptcy_cases')
       .insert({
-        user_id: user.id,
+        ...baseCaseInsert,
         case_ref: caseRef,
-        title,
-        chapter,
-        filing_state: filingState || null,
-        filing_county: filingCounty || null,
       })
       .select('id, case_ref')
       .single()
 
-    if (!insertResult.error && insertResult.data) {
-      createdCase = insertResult.data
+    if (!insertWithRefResult.error && insertWithRefResult.data) {
+      createdCase = insertWithRefResult.data
       insertError = null
       break
     }
 
-    insertError = { code: insertResult.error?.code }
-    if (insertResult.error?.code !== '23505') {
+    if (isMissingCaseRefColumnError(insertWithRefResult.error)) {
+      const insertWithoutRefResult = await supabase
+        .from('bankruptcy_cases')
+        .insert(baseCaseInsert)
+        .select('id')
+        .single()
+
+      if (!insertWithoutRefResult.error && insertWithoutRefResult.data) {
+        createdCase = {
+          id: insertWithoutRefResult.data.id,
+          case_ref: null,
+        }
+        insertError = null
+      } else {
+        insertError = {
+          code: insertWithoutRefResult.error?.code,
+          message: insertWithoutRefResult.error?.message,
+        }
+      }
+      break
+    }
+
+    insertError = {
+      code: insertWithRefResult.error?.code,
+      message: insertWithRefResult.error?.message,
+    }
+
+    if (insertWithRefResult.error?.code !== '23505') {
       break
     }
   }
