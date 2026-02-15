@@ -592,6 +592,88 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
         required: true,
       },
       {
+        key: 'credit_report_provider_type',
+        label: 'Credit report source',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Attorney-ordered tri-merge report', value: 'tri_merge_attorney' },
+          { label: 'Client-provided report pending attorney verification', value: 'client_report' },
+          { label: 'Legacy report from prior legal matter', value: 'legacy_legal_report' },
+        ],
+      },
+      {
+        key: 'credit_report_pulled_date',
+        label: 'Credit report pull date',
+        type: 'date',
+        required: true,
+      },
+      {
+        key: 'credit_report_reference',
+        label: 'Credit report reference ID',
+        type: 'text',
+        placeholder: 'Internal report ID or vendor reference number',
+      },
+      {
+        key: 'all_credit_cards_disclosed',
+        label: 'All known credit cards/lines of credit are disclosed?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'all_bank_accounts_disclosed',
+        label: 'All checking, savings, brokerage, and money accounts are disclosed?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'liabilities_reconciled_to_credit_report',
+        label: 'Debts reconciled against the pulled credit report?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'undisclosed_accounts_resolved',
+        label: 'Any newly discovered accounts have been resolved and added?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'cm_ecf_workflow_reviewed',
+        label: 'Court ECM/CM-ECF filing workflow reviewed with the client?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'meeting_341_notice_received',
+        label: 'Section 341(a) meeting notice received?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'meeting_341_platform',
+        label: 'Section 341(a) meeting platform',
+        type: 'select',
+        required: true,
+        options: [
+          { label: 'Zoom', value: 'zoom' },
+          { label: 'Telephone', value: 'telephone' },
+          { label: 'In-person', value: 'in_person' },
+          { label: 'Other virtual platform', value: 'other_virtual' },
+        ],
+      },
+      {
+        key: 'meeting_341_date',
+        label: 'Section 341(a) meeting date',
+        type: 'date',
+      },
+      {
+        key: 'meeting_341_join_link',
+        label: 'Section 341(a) meeting join link',
+        type: 'text',
+        placeholder: 'https://...',
+      },
+      {
         key: 'authorization_signed_date',
         label: 'Authorization signed date',
         type: 'date',
@@ -681,3 +763,4 @@ export function getPreviousStepId(stepId: string): string | null {
   }
   return QUESTIONNAIRE_STEPS[index - 1].id
 }
+

@@ -63,6 +63,50 @@ export default function Home() {
         </article>
       </section>
 
+      <section className="surface process-overview-wrap">
+        <div className="stack">
+          <h2 style={{ margin: 0 }}>Court + Trustee Readiness Controls</h2>
+          <div className="grid-two">
+            <article className="process-overview-card">
+              <h3>ECM/CM-ECF Workflow</h3>
+              <p>
+                Intake now tracks court filing workflow checkpoints so no filing-stage milestones are
+                missed before attorney submission.
+              </p>
+            </article>
+            <article className="process-overview-card">
+              <h3>Credit Report Reconciliation</h3>
+              <p>
+                Credit report source, debt reconciliation, and account-completeness checks help prevent
+                missed cards, loans, and bank accounts.
+              </p>
+            </article>
+            <article className="process-overview-card">
+              <h3>Counseling Milestones</h3>
+              <p>
+                Pre-filing counseling and post-filing debtor education checkpoints are tracked directly in
+                each case.
+              </p>
+            </article>
+            <article className="process-overview-card">
+              <h3>341(a) Hearing Prep</h3>
+              <p>
+                Record 341 notice, platform, date, and join link, with official trustee resources linked
+                in the review packet.
+              </p>
+            </article>
+          </div>
+          <div className="row">
+            <Link className="button-secondary" href="/process">
+              View Court Process
+            </Link>
+            <Link className="button-secondary" href="/pricing">
+              View Pricing Model
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <ChapterGuides />
 
       <section className="surface faq-wrap">

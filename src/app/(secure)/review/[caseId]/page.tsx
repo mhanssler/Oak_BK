@@ -8,6 +8,12 @@ import {
   recommendChapterFromIntake,
   summarizeCaliforniaMeansTest,
 } from '@/lib/bankruptcy/california'
+import {
+  TRUSTEE_RESOURCE_LINKS,
+  buildTrusteeReadinessChecks,
+  listBlockingReadinessGaps,
+  toHttpUrl,
+} from '@/lib/compliance/readiness'
 import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
 import { formatFieldValue } from '@/lib/questionnaire/format'
 import { getResponsePayload, readResponseField } from '@/lib/questionnaire/payload'
@@ -24,6 +30,10 @@ const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }
   submit_blocked: {
     tone: 'error',
     text: 'Cannot submit yet. Complete all required intake steps first.',
+  },
+  submit_blocked_readiness: {
+    tone: 'error',
+    text: 'Cannot submit yet. Resolve all trustee-readiness blockers first.',
   },
 }
 
@@ -67,16 +77,25 @@ async function submitCaseAction(formData: FormData) {
 
   const { data: responsesRaw } = await supabase
     .from('case_responses')
-    .select('step_id, completed')
+    .select('step_id, completed, payload')
     .eq('case_id', caseId)
 
   const completionMap = new Map<string, boolean>(
     (responsesRaw || []).map((row) => [row.step_id as string, Boolean(row.completed)]),
   )
   const hasMissingStep = QUESTIONNAIRE_STEPS.some((step) => !completionMap.get(step.id))
+  const readinessReadField = (fieldKey: string): unknown =>
+    readResponseField((responsesRaw || []) as Array<{ payload: unknown }>, fieldKey)
+  const blockingReadinessGaps = listBlockingReadinessGaps(
+    buildTrusteeReadinessChecks(readinessReadField),
+  )
 
   if (hasMissingStep) {
     redirect(`/review/${caseId}?status=submit_blocked`)
+  }
+
+  if (blockingReadinessGaps.length > 0) {
+    redirect(`/review/${caseId}?status=submit_blocked_readiness`)
   }
 
   await supabase
@@ -174,25 +193,10 @@ export default async function ReviewCasePage({
     ownsPrimaryResidence: asBoolean(readField('owns_primary_residence')),
   })
 
-  const complianceChecks = [
-    {
-      label: 'Pre-filing credit counseling complete',
-      done: asBoolean(readField('credit_counseling_completed')) === true,
-    },
-    {
-      label: 'Credit counseling certificate ready',
-      done: asBoolean(readField('credit_counseling_certificate_ready')) === true,
-    },
-    {
-      label: '341 attendance acknowledgment',
-      done: asBoolean(readField('attend_341_meeting_acknowledged')) === true,
-    },
-    {
-      label: 'FCRA credit-pull authorization',
-      done: asBoolean(readField('authorized_credit_pull')) === true,
-    },
-  ]
-  const incompleteCompliance = complianceChecks.filter((item) => !item.done)
+  const readinessChecks = buildTrusteeReadinessChecks(readField)
+  const blockingReadinessGaps = listBlockingReadinessGaps(readinessChecks)
+  const incompleteReadiness = readinessChecks.filter((item) => !item.done)
+  const section341MeetingLink = toHttpUrl(readField('meeting_341_join_link'))
 
   return (
     <main>
@@ -237,6 +241,16 @@ export default async function ReviewCasePage({
             <div className="alert alert-success">All steps complete. Ready for legal review.</div>
           )}
 
+          {blockingReadinessGaps.length > 0 ? (
+            <div className="alert alert-error">
+              Trustee-readiness blockers: {blockingReadinessGaps.join(', ')}
+            </div>
+          ) : (
+            <div className="alert alert-success">
+              Trustee-readiness blockers cleared. Submission controls are unlocked.
+            </div>
+          )}
+
           <div className="grid-two">
             <div className="surface" style={{ padding: '0.8rem' }}>
               <div className="stack" style={{ gap: '0.35rem' }}>
@@ -251,18 +265,26 @@ export default async function ReviewCasePage({
 
             <div className="surface" style={{ padding: '0.8rem' }}>
               <div className="stack" style={{ gap: '0.35rem' }}>
-                <strong>Exemptions And Compliance</strong>
+                <strong>Exemptions, Counseling, And Trustee Readiness</strong>
                 <span className="hint">
                   Exemption system:{' '}
                   {exemptionSystem ? `${exemptionSystem.label} (${exemptionSystem.detail})` : 'Not selected'}
                 </span>
-                {incompleteCompliance.length > 0 ? (
+                {incompleteReadiness.length > 0 ? (
                   <span className="hint">
-                    Missing compliance checkpoints: {incompleteCompliance.map((item) => item.label).join(', ')}
+                    Outstanding checkpoints: {incompleteReadiness.map((item) => item.label).join(', ')}
                   </span>
                 ) : (
-                  <span className="hint">Core counseling/authorization checkpoints are complete.</span>
+                  <span className="hint">Core counseling/credit/trustee checkpoints are complete.</span>
                 )}
+                <div className="row">
+                  <Link className="hint" href={TRUSTEE_RESOURCE_LINKS.creditCounseling} target="_blank" rel="noreferrer">
+                    Approved pre-filing counseling providers
+                  </Link>
+                  <Link className="hint" href={TRUSTEE_RESOURCE_LINKS.debtorEducation} target="_blank" rel="noreferrer">
+                    Approved post-filing debtor education providers
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="surface" style={{ padding: '0.8rem' }}>
@@ -274,11 +296,68 @@ export default async function ReviewCasePage({
                 </span>
               </div>
             </div>
+            <div className="surface" style={{ padding: '0.8rem' }}>
+              <div className="stack" style={{ gap: '0.35rem' }}>
+                <strong>Court ECM/CM-ECF + 341(a) Hearing</strong>
+                <span className="hint">
+                  ECM/CM-ECF workflow reviewed:{' '}
+                  {asBoolean(readField('cm_ecf_workflow_reviewed')) === true ? 'Yes' : 'No'}
+                </span>
+                <span className="hint">
+                  341(a) platform:{' '}
+                  {typeof readField('meeting_341_platform') === 'string'
+                    ? String(readField('meeting_341_platform'))
+                    : 'Not selected'}
+                </span>
+                {section341MeetingLink ? (
+                  <Link className="hint" href={section341MeetingLink} target="_blank" rel="noreferrer">
+                    Open 341(a) meeting link
+                  </Link>
+                ) : (
+                  <span className="hint">341(a) join link not entered yet.</span>
+                )}
+                <div className="row">
+                  <Link className="hint" href={TRUSTEE_RESOURCE_LINKS.cmEcf} target="_blank" rel="noreferrer">
+                    CM/ECF process reference
+                  </Link>
+                  <Link className="hint" href={TRUSTEE_RESOURCE_LINKS.section341Meetings} target="_blank" rel="noreferrer">
+                    Official 341(a) meeting resources
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="surface" style={{ padding: '0.8rem' }}>
+            <div className="stack" style={{ gap: '0.35rem' }}>
+              <strong>Trustee-Readiness Checklist</strong>
+              <ul className="process-list" style={{ marginTop: 0, marginBottom: 0 }}>
+                {readinessChecks.map((check) => (
+                  <li key={check.key}>
+                    {check.done ? 'Complete' : 'Pending'}: {check.label}
+                    {check.helpHref ? (
+                      <>
+                        {' '}
+                        (
+                        <Link className="hint" href={check.helpHref} target="_blank" rel="noreferrer">
+                          official reference
+                        </Link>
+                        )
+                      </>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <form action={submitCaseAction}>
             <input type="hidden" name="caseId" value={caseId} />
-            <button className="button" type="submit" disabled={missingSteps.length > 0}>
+            <button
+              className="button"
+              type="submit"
+              disabled={missingSteps.length > 0 || blockingReadinessGaps.length > 0}
+            >
               Mark Submitted For Attorney Review
             </button>
           </form>

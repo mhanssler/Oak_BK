@@ -9,6 +9,11 @@ import {
   summarizeCaliforniaMeansTest,
 } from '@/lib/bankruptcy/california'
 import { isAdminUser } from '@/lib/auth/roles'
+import {
+  TRUSTEE_RESOURCE_LINKS,
+  buildTrusteeReadinessChecks,
+  listBlockingReadinessGaps,
+} from '@/lib/compliance/readiness'
 import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
 import { formatFieldValue } from '@/lib/questionnaire/format'
 import { getResponsePayload, readResponseField } from '@/lib/questionnaire/payload'
@@ -88,6 +93,7 @@ export default async function AdminCaseDetailPage({
   const exemptionValue = readField('exemption_system')
   const exemptionSystem =
     typeof exemptionValue === 'string' ? CALIFORNIA_EXEMPTION_SYSTEMS[exemptionValue] : null
+  const blockingReadinessGaps = listBlockingReadinessGaps(buildTrusteeReadinessChecks(readField))
 
   return (
     <main>
@@ -132,6 +138,31 @@ export default async function AdminCaseDetailPage({
                   Exemption system:{' '}
                   {exemptionSystem ? `${exemptionSystem.label} (${exemptionSystem.detail})` : 'Not selected'}
                 </span>
+              </div>
+            </div>
+            <div className="surface" style={{ padding: '0.8rem' }}>
+              <div className="stack" style={{ gap: '0.35rem' }}>
+                <strong>Trustee-Readiness Status</strong>
+                {blockingReadinessGaps.length > 0 ? (
+                  <span className="hint">
+                    Blocking gaps: {blockingReadinessGaps.join(', ')}
+                  </span>
+                ) : (
+                  <span className="hint">All blocking readiness checks are complete.</span>
+                )}
+                <div className="row">
+                  <Link className="hint" href={TRUSTEE_RESOURCE_LINKS.cmEcf} target="_blank" rel="noreferrer">
+                    CM/ECF reference
+                  </Link>
+                  <Link
+                    className="hint"
+                    href={TRUSTEE_RESOURCE_LINKS.section341Meetings}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    341(a) meeting resources
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

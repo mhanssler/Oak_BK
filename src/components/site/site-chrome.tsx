@@ -28,6 +28,12 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <span>Oak Bankruptcy Intake</span>
           </Link>
           <nav className="row public-nav">
+            <Link className="button-secondary" href="/process">
+              Court Process
+            </Link>
+            <Link className="button-secondary" href="/pricing">
+              Pricing
+            </Link>
             <Link className="button-secondary" href="/login">
               Sign In
             </Link>
@@ -47,6 +53,12 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
             <span className="hint">Secure client intake and attorney-reviewed filing preparation.</span>
           </div>
           <div className="row public-footer-links">
+            <Link className="hint" href="/process">
+              Court Process
+            </Link>
+            <Link className="hint" href="/pricing">
+              Pricing
+            </Link>
             <Link className="hint" href="/login">
               Sign In
             </Link>

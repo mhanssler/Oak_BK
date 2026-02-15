@@ -161,6 +161,29 @@ h3 {
   color: #3f5860;
 }
 
+.process-overview-wrap {
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.process-overview-card {
+  border: 1px solid #d6e4e0;
+  border-radius: 12px;
+  background: #f9fcfb;
+  padding: 0.8rem;
+}
+
+.process-overview-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.03rem;
+  color: #0f4a58;
+}
+
+.process-overview-card p {
+  margin: 0;
+  color: #3f5f68;
+}
+
 .faq-wrap {
   padding: 1rem;
   margin-bottom: 1.4rem;
@@ -224,6 +247,40 @@ h3 {
 
 .chapter-guide-actions {
   gap: 0.55rem;
+}
+
+.pricing-card {
+  padding: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.pricing-card h2 {
+  margin: 0;
+}
+
+.pricing-amount {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0b4b3f;
+}
+
+.pricing-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+  color: #355660;
+}
+
+.process-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+  color: #355660;
 }
 
 .faq-grid {
