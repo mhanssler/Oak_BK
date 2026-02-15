@@ -31,8 +31,8 @@ function normalizeText(raw: FormDataEntryValue | null): string {
 async function createCaseAction(formData: FormData) {
   'use server'
 
-  assertTrustedOrigin()
-  const supabase = createSupabaseServerClient()
+  await assertTrustedOrigin()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -102,7 +102,7 @@ export default async function DashboardPage({
   const statusCode = readSingle(searchParams.status)
   const status = statusCode ? STATUS_MESSAGE[statusCode] : null
 
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

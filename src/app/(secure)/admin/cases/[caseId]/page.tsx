@@ -21,7 +21,7 @@ export default async function AdminCaseDetailPage({
   params: { caseId: string }
 }) {
   const caseId = params.caseId
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

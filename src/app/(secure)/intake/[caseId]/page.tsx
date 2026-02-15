@@ -80,7 +80,7 @@ function normalizeIntent(raw: FormDataEntryValue | null): 'previous' | 'save' | 
 async function saveStepAction(formData: FormData) {
   'use server'
 
-  assertTrustedOrigin()
+  await assertTrustedOrigin()
 
   const caseIdEntry = formData.get('caseId')
   const stepIdEntry = formData.get('stepId')
@@ -93,7 +93,7 @@ async function saveStepAction(formData: FormData) {
   }
 
   const step = getQuestionnaireStep(rawStepId)
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -194,7 +194,7 @@ export default async function IntakeCasePage({
   const requestedStep = readSingle(searchParams.step)
   const step = getQuestionnaireStep(requestedStep)
 
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

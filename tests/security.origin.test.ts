@@ -19,35 +19,35 @@ describe('origin security checks', () => {
     getHeaderValue.mockReset()
   })
 
-  it('allows requests with missing origin or host headers', () => {
+  it('allows requests with missing origin or host headers', async () => {
     setHeaders({ origin: null, host: null })
-    expect(() => assertTrustedOrigin()).not.toThrow()
+    await expect(assertTrustedOrigin()).resolves.toBeUndefined()
   })
 
-  it('allows trusted origin when protocol and host match', () => {
+  it('allows trusted origin when protocol and host match', async () => {
     setHeaders({
       origin: 'https://app.example.com',
       host: 'app.example.com',
       'x-forwarded-proto': 'https',
     })
-    expect(() => assertTrustedOrigin()).not.toThrow()
+    await expect(assertTrustedOrigin()).resolves.toBeUndefined()
   })
 
-  it('rejects mismatched origin', () => {
+  it('rejects mismatched origin', async () => {
     setHeaders({
       origin: 'https://evil.example.com',
       host: 'app.example.com',
       'x-forwarded-proto': 'https',
     })
-    expect(() => assertTrustedOrigin()).toThrow('Invalid request origin.')
+    await expect(assertTrustedOrigin()).rejects.toThrow('Invalid request origin.')
   })
 
-  it('rejects malformed origin values', () => {
+  it('rejects malformed origin values', async () => {
     setHeaders({
       origin: 'not-a-url',
       host: 'app.example.com',
       'x-forwarded-proto': 'https',
     })
-    expect(() => assertTrustedOrigin()).toThrow('Invalid request origin.')
+    await expect(assertTrustedOrigin()).rejects.toThrow('Invalid request origin.')
   })
 })

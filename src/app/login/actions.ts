@@ -33,8 +33,8 @@ function toLoginPath(status: string): string {
   return `/login?${params.toString()}`
 }
 
-function inferRequestOrigin(): string {
-  const requestHeaders = headers()
+async function inferRequestOrigin(): Promise<string> {
+  const requestHeaders = await headers()
   const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
   const proto = requestHeaders.get('x-forwarded-proto') ?? 'https'
 
@@ -50,7 +50,7 @@ function inferRequestOrigin(): string {
 }
 
 export async function signInAction(formData: FormData): Promise<void> {
-  assertTrustedOrigin()
+  await assertTrustedOrigin()
 
   const email = normalizeEmail(formData.get('email'))
   const password = normalizePassword(formData.get('password'))
@@ -59,7 +59,7 @@ export async function signInAction(formData: FormData): Promise<void> {
     redirect(toLoginPath('missing_credentials'))
   }
 
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const { error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
@@ -70,7 +70,7 @@ export async function signInAction(formData: FormData): Promise<void> {
 }
 
 export async function signUpAction(formData: FormData): Promise<void> {
-  assertTrustedOrigin()
+  await assertTrustedOrigin()
 
   const email = normalizeEmail(formData.get('email'))
   const password = normalizePassword(formData.get('password'))
@@ -84,8 +84,8 @@ export async function signUpAction(formData: FormData): Promise<void> {
     redirect(toLoginPath('weak_password'))
   }
 
-  const supabase = createSupabaseServerClient()
-  const origin = inferRequestOrigin()
+  const supabase = await createSupabaseServerClient()
+  const origin = await inferRequestOrigin()
   const { error } = await supabase.auth.signUp({
     email,
     password,

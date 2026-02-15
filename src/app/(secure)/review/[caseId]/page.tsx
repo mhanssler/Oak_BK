@@ -37,7 +37,7 @@ function readSingle(value: string | string[] | undefined): string | null {
 async function submitCaseAction(formData: FormData) {
   'use server'
 
-  assertTrustedOrigin()
+  await assertTrustedOrigin()
   const caseIdValue = formData.get('caseId')
   const caseId = typeof caseIdValue === 'string' ? caseIdValue : ''
 
@@ -45,7 +45,7 @@ async function submitCaseAction(formData: FormData) {
     redirect('/dashboard')
   }
 
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -106,7 +106,7 @@ export default async function ReviewCasePage({
   const statusCode = readSingle(searchParams.status)
   const status = statusCode ? STATUS_MESSAGE[statusCode] : null
 
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 
-export function assertTrustedOrigin(): void {
-  const requestHeaders = headers()
+export async function assertTrustedOrigin(): Promise<void> {
+  const requestHeaders = await headers()
   const origin = requestHeaders.get('origin')
   const host = requestHeaders.get('x-forwarded-host') ?? requestHeaders.get('host')
 

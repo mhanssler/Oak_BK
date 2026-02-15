@@ -7,8 +7,8 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 async function signOutAction() {
   'use server'
 
-  assertTrustedOrigin()
-  const supabase = createSupabaseServerClient()
+  await assertTrustedOrigin()
+  const supabase = await createSupabaseServerClient()
   await supabase.auth.signOut()
   redirect('/login')
 }
@@ -18,7 +18,7 @@ export default async function SecureLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createSupabaseServerClient()
+  const supabase = await createSupabaseServerClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()

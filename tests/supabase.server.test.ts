@@ -41,7 +41,7 @@ describe('supabase server client factory', () => {
     }))
 
     const { createSupabaseServerClient } = await import('@/lib/supabase/server')
-    createSupabaseServerClient()
+    await createSupabaseServerClient()
 
     expect(createServerClient).toHaveBeenCalledTimes(1)
     const config = createServerClient.mock.calls[0]![2]
@@ -87,10 +87,11 @@ describe('supabase server client factory', () => {
     }))
 
     const { createSupabaseServerClient } = await import('@/lib/supabase/server')
-    createSupabaseServerClient()
+    await createSupabaseServerClient()
 
     const config = createServerClient.mock.calls[0]![2]
     expect(() => config.cookies.set('session', 'new-token', { path: '/' })).not.toThrow()
     expect(() => config.cookies.remove('session', { path: '/' })).not.toThrow()
   })
 })
+
