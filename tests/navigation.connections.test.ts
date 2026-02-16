@@ -3,6 +3,7 @@ import path from 'node:path'
 
 const STATIC_PUBLIC_ROUTES = new Set([
   '/',
+  '/faq',
   '/login',
   '/signup',
   '/process',

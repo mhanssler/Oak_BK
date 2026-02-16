@@ -50,10 +50,10 @@ export default async function SignupVerifyPage({
 
           <div className="row">
             <Link className="button" href="/login">
-              Go To Sign In
+              Continue Intake
             </Link>
             <Link className="button-secondary" href="/signup">
-              Use a Different Email
+              Start Intake
             </Link>
           </div>
         </div>

@@ -33,9 +33,9 @@ export function ChapterGuides() {
   return (
     <section className="surface chapter-guides-wrap">
       <div className="stack">
-        <h2 style={{ margin: 0 }}>Meet Your Chapter Guides</h2>
+        <h2 style={{ margin: 0 }}>Quick Chapter Explainers</h2>
         <p className="hint" style={{ marginTop: 0 }}>
-          Watch a short video explanation, then start your secure intake to move forward.
+          Tap either video for a quick overview, then continue with intake.
         </p>
 
         <div className="chapter-guides-grid">
@@ -55,18 +55,18 @@ export function ChapterGuides() {
                 </div>
 
                 <p>{guide.summary}</p>
-
-                <div className="row chapter-guide-actions">
-                  <Link className="button" href="/signup">
-                    Start Secure Intake
-                  </Link>
-                  <Link className="button-secondary" href="/login">
-                    Continue Intake
-                  </Link>
-                </div>
               </article>
             )
           })}
+        </div>
+
+        <div className="row">
+          <Link className="button" href="/signup">
+            Start Intake
+          </Link>
+          <Link className="button-secondary" href="/login">
+            Continue Intake
+          </Link>
         </div>
       </div>
     </section>

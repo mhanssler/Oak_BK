@@ -36,7 +36,7 @@ export default async function AuthConfirmedPage({
               Continue
             </Link>
             <Link className="button-secondary" href="/login">
-              Go To Login
+              Continue Intake
             </Link>
           </div>
         </div>

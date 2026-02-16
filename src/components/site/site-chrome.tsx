@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 const SECURE_PATH_PREFIXES = ['/dashboard', '/intake', '/review', '/admin']
@@ -24,21 +23,23 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <header className="public-header">
         <div className="public-header-inner">
           <Link href="/" className="brand-lockup">
-            <Image src="/mighty_oak.png" alt="Oak emblem" width={34} height={34} />
-            <span>Oak Bankruptcy Intake</span>
+            <span>Bankruptcy Intake Portal</span>
           </Link>
           <nav className="row public-nav">
-            <Link className="button-secondary" href="/process">
-              Court Process
+            <Link className="hint" href="/faq">
+              View FAQ
             </Link>
-            <Link className="button-secondary" href="/pricing">
-              Pricing
+            <Link className="hint" href="/process">
+              View Process
+            </Link>
+            <Link className="hint" href="/pricing">
+              View Pricing
             </Link>
             <Link className="button-secondary" href="/login">
-              Sign In
+              Continue Intake
             </Link>
             <Link className="button" href="/signup">
-              Create Account
+              Start Intake
             </Link>
           </nav>
         </div>
@@ -49,21 +50,24 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <footer className="public-footer">
         <div className="public-footer-inner">
           <div className="stack" style={{ gap: '0.35rem' }}>
-            <strong>Oak Bankruptcy Intake</strong>
+            <strong>Bankruptcy Intake Portal</strong>
             <span className="hint">Secure client intake and attorney-reviewed filing preparation.</span>
           </div>
           <div className="row public-footer-links">
+            <Link className="hint" href="/faq">
+              View FAQ
+            </Link>
             <Link className="hint" href="/process">
-              Court Process
+              View Process
             </Link>
             <Link className="hint" href="/pricing">
-              Pricing
+              View Pricing
             </Link>
             <Link className="hint" href="/login">
-              Sign In
+              Continue Intake
             </Link>
             <Link className="hint" href="/signup">
-              Create Account
+              Start Intake
             </Link>
           </div>
         </div>

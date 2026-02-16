@@ -14,7 +14,7 @@ export default function NotFound() {
             Back To Home
           </Link>
           <Link className="button-secondary" href="/login">
-            Sign In
+            Continue Intake
           </Link>
         </div>
       </section>

@@ -56,8 +56,8 @@ export default function ProcessPage() {
         <div className="stack">
           <h2 style={{ margin: 0 }}>Enterprise-Style Case Controls</h2>
           <p className="hint" style={{ margin: 0 }}>
-            Oak uses workflow controls commonly found in professional bankruptcy preparation systems,
-            adapted for a client-first intake experience.
+            This portal uses workflow controls commonly found in professional bankruptcy preparation
+            systems, adapted for a client-first intake experience.
           </p>
           <ul className="process-list">
             {ENTERPRISE_PATTERNS.map((pattern) => (
@@ -91,6 +91,9 @@ export default function ProcessPage() {
           </Link>
           <Link className="button-secondary" href="/pricing">
             View Pricing
+          </Link>
+          <Link className="button-secondary" href="/faq">
+            View FAQ
           </Link>
         </div>
       </section>

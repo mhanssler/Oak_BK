@@ -35,7 +35,7 @@ export default async function SecureLayout({
         <div className="shell-header-inner">
           <div className="row secure-nav">
             <Link href="/dashboard" style={{ fontWeight: 700 }}>
-              Oak Client Intake Portal
+              Client Intake Portal
             </Link>
             {showAdminNav ? <Link href="/admin/cases">Admin Case Review</Link> : null}
             <span className="hint shell-user-email">Signed in as {user.email}</span>

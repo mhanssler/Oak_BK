@@ -73,10 +73,10 @@ export default async function SignupPage({
 
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <button className="button" type="submit">
-                Create Account
+                Start Intake
               </button>
               <Link className="button-secondary" href="/login">
-                Already have an account?
+                Continue Intake
               </Link>
             </div>
           </form>

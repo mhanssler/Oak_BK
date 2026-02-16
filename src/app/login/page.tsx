@@ -53,10 +53,10 @@ export default async function LoginPage({
 
             <div className="row" style={{ justifyContent: 'space-between' }}>
               <button className="button" formAction={signInAction}>
-                Sign In
+                Continue Intake
               </button>
               <Link className="button-secondary" href="/signup">
-                New client? Create account
+                Start Intake
               </Link>
             </div>
           </form>
