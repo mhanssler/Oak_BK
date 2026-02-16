@@ -1,38 +1,12 @@
 import Link from 'next/link'
-
-export const AUTH_CONFIRMED_STATUS_MESSAGE: Record<
-  string,
-  { tone: 'error' | 'success'; title: string; text: string }
-> = {
-  success: {
-    tone: 'success',
-    title: 'Email Confirmed',
-    text: 'Your account is verified and ready. Continue to your dashboard.',
-  },
-  failed: {
-    tone: 'error',
-    title: 'Verification Link Failed',
-    text: 'The verification link was invalid or expired. Request a new account email and try again.',
-  },
-  missing_code: {
-    tone: 'error',
-    title: 'Verification Link Incomplete',
-    text: 'This page was opened without a valid verification token.',
-  },
-}
+import { safeNextPath } from '@/lib/auth/redirects'
+import { AUTH_CONFIRMED_STATUS_MESSAGE } from '@/lib/ui/status-messages'
 
 function readSingle(value: string | string[] | undefined): string | null {
   if (!value) {
     return null
   }
   return Array.isArray(value) ? value[0] : value
-}
-
-export function safeNextPath(path: string | null): string {
-  if (!path || !path.startsWith('/')) {
-    return '/dashboard'
-  }
-  return path
 }
 
 export default async function AuthConfirmedPage({

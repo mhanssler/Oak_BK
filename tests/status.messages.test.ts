@@ -1,6 +1,9 @@
-import { AUTH_CONFIRMED_STATUS_MESSAGE, safeNextPath } from '@/app/auth/confirmed/page'
-import { LOGIN_STATUS_MESSAGE } from '@/app/login/page'
-import { SIGNUP_STATUS_MESSAGE } from '@/app/signup/page'
+import { safeNextPath } from '@/lib/auth/redirects'
+import {
+  AUTH_CONFIRMED_STATUS_MESSAGE,
+  LOGIN_STATUS_MESSAGE,
+  SIGNUP_STATUS_MESSAGE,
+} from '@/lib/ui/status-messages'
 
 function assertActionableStatusMessages(
   map: Record<string, { tone: 'error' | 'success'; text: string }>,

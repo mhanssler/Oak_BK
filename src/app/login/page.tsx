@@ -1,32 +1,6 @@
 import Link from 'next/link'
 import { signInAction } from '@/app/login/actions'
-
-export const LOGIN_STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
-  missing_credentials: {
-    tone: 'error',
-    text: 'Enter both email and password.',
-  },
-  weak_password: {
-    tone: 'error',
-    text: 'Use a password with at least 12 characters.',
-  },
-  auth_failed: {
-    tone: 'error',
-    text: 'Sign in failed. Check your credentials or verify your email.',
-  },
-  signup_failed: {
-    tone: 'error',
-    text: 'Account creation failed. Try again from the Create Account page.',
-  },
-  account_exists: {
-    tone: 'success',
-    text: 'This email is already registered. Sign in to continue your intake.',
-  },
-  callback_failed: {
-    tone: 'error',
-    text: 'Email verification link could not be completed. Request a new verification link.',
-  },
-}
+import { LOGIN_STATUS_MESSAGE } from '@/lib/ui/status-messages'
 
 function readSingle(value: string | string[] | undefined): string | null {
   if (!value) {

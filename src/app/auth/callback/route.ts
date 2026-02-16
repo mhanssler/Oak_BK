@@ -1,17 +1,6 @@
 import { NextResponse } from 'next/server'
+import { sanitizeRedirectPath } from '@/lib/auth/redirects'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-
-export function sanitizeRedirectPath(nextParam: string | null): string {
-  if (!nextParam) {
-    return '/dashboard'
-  }
-
-  if (!nextParam.startsWith('/')) {
-    return '/dashboard'
-  }
-
-  return nextParam
-}
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)

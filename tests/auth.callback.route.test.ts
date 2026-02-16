@@ -6,7 +6,8 @@ vi.mock('@/lib/supabase/server', () => ({
   createSupabaseServerClient: createSupabaseServerClientMock,
 }))
 
-import { GET, sanitizeRedirectPath } from '@/app/auth/callback/route'
+import { GET } from '@/app/auth/callback/route'
+import { sanitizeRedirectPath } from '@/lib/auth/redirects'
 
 function toRedirectUrl(response: Response): URL {
   const location = response.headers.get('location')

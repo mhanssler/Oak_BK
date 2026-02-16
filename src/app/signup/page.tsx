@@ -1,20 +1,6 @@
 import Link from 'next/link'
 import { signUpAction } from '@/app/login/actions'
-
-export const SIGNUP_STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
-  missing_credentials: {
-    tone: 'error',
-    text: 'Please enter your full legal name, email, and password.',
-  },
-  weak_password: {
-    tone: 'error',
-    text: 'Use a password with at least 12 characters.',
-  },
-  signup_failed: {
-    tone: 'error',
-    text: 'Account creation failed. Please try again.',
-  },
-}
+import { SIGNUP_STATUS_MESSAGE } from '@/lib/ui/status-messages'
 
 function readSingle(value: string | string[] | undefined): string | null {
   if (!value) {
