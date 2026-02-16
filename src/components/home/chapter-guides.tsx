@@ -10,7 +10,7 @@ interface ChapterGuide {
   summary: string
 }
 
-const CHAPTER_GUIDES: ChapterGuide[] = [
+export const CHAPTER_GUIDES: ChapterGuide[] = [
   {
     id: 'chapter7',
     chapterLabel: 'Chapter 7',

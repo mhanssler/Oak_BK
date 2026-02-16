@@ -124,6 +124,22 @@ h3 {
   color: var(--ink-soft);
 }
 
+.signal-strip {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.signal-pill {
+  border: 1px solid #b8d5cd;
+  border-radius: 999px;
+  background: #edf8f5;
+  color: #0d4b3f;
+  padding: 0.24rem 0.62rem;
+  font-size: 0.81rem;
+  font-weight: 700;
+}
+
 .hero-split {
   display: grid;
   gap: 1rem;
@@ -159,6 +175,13 @@ h3 {
 .feature-card p {
   margin: 0;
   color: #3f5860;
+}
+
+.urgency-banner {
+  margin-bottom: 1rem;
+  padding: 0.9rem;
+  border-color: #b5cfc8;
+  background: linear-gradient(160deg, #e8f7f3, #fbfdfc);
 }
 
 .process-overview-wrap {
@@ -247,6 +270,30 @@ h3 {
 
 .chapter-guide-actions {
   gap: 0.55rem;
+}
+
+.social-proof-wrap {
+  padding: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.social-share-row {
+  gap: 0.55rem;
+}
+
+.share-chip {
+  border: 1px solid #c3d8d1;
+  background: #f7fbfa;
+  color: #20545f;
+  border-radius: 999px;
+  padding: 0.42rem 0.8rem;
+  font-size: 0.88rem;
+  font-weight: 640;
+}
+
+.share-chip:hover {
+  border-color: #9fc0b7;
+  background: #edf5f2;
 }
 
 .pricing-card {
@@ -477,7 +524,7 @@ h3 {
 
 .list-table {
   width: 100%;
-  min-width: 720px;
+  min-width: 860px;
   border-collapse: collapse;
 }
 
@@ -627,7 +674,7 @@ h3 {
   }
 
   .list-table {
-    min-width: 660px;
+    min-width: 780px;
   }
 
   .chapter-guide-actions .button,

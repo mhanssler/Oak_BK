@@ -39,10 +39,10 @@ export default function PricingPage() {
   return (
     <main>
       <section className="hero">
-        <h1>Pricing Model</h1>
+        <h1>Simple, Transparent Pricing</h1>
         <p>
-          Transparent case-based pricing for secure intake, trustee-readiness controls, and legal-team
-          handoff.
+          Case-based pricing for secure intake, trustee-readiness controls, and legal-team handoff.
+          Designed to help you start fast without hidden workflow fees.
         </p>
       </section>
 
@@ -63,6 +63,24 @@ export default function PricingPage() {
             </Link>
           </article>
         ))}
+      </section>
+
+      <section className="surface" style={{ padding: '1rem', marginBottom: '1.3rem' }}>
+        <div className="stack" style={{ gap: '0.6rem' }}>
+          <strong>Launch Promotion</strong>
+          <p className="hint" style={{ margin: 0 }}>
+            Social ad visitors can begin with Intake Essentials and upgrade later without re-entering
+            data.
+          </p>
+          <div className="row">
+            <Link className="button" href="/signup">
+              Claim Launch Access
+            </Link>
+            <Link className="button-secondary" href="/process">
+              Review Filing Process
+            </Link>
+          </div>
+        </div>
       </section>
 
       <section className="surface" style={{ padding: '1rem', marginBottom: '1.3rem' }}>

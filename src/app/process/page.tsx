@@ -19,6 +19,14 @@ const OFFICIAL_LINKS = [
   },
 ]
 
+const ENTERPRISE_PATTERNS = [
+  'Court form sequence validation before submission',
+  'Creditor matrix review against intake + credit report',
+  'Case notice/deadline calendar synchronization',
+  '341(a) hearing platform/date/link tracking',
+  'Trustee document portal readiness checkpoints',
+]
+
 export default function ProcessPage() {
   return (
     <main>
@@ -41,6 +49,21 @@ export default function ProcessPage() {
             <li>Record 341(a) notice, platform, date, and meeting link.</li>
             <li>Complete trustee-readiness blockers before final submission.</li>
           </ol>
+        </div>
+      </section>
+
+      <section className="surface" style={{ padding: '1rem', marginBottom: '1rem' }}>
+        <div className="stack">
+          <h2 style={{ margin: 0 }}>Enterprise-Style Case Controls</h2>
+          <p className="hint" style={{ margin: 0 }}>
+            Oak uses workflow controls commonly found in professional bankruptcy preparation systems,
+            adapted for a client-first intake experience.
+          </p>
+          <ul className="process-list">
+            {ENTERPRISE_PATTERNS.map((pattern) => (
+              <li key={pattern}>{pattern}</li>
+            ))}
+          </ul>
         </div>
       </section>
 

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-function sanitizeRedirectPath(nextParam: string | null): string {
+export function sanitizeRedirectPath(nextParam: string | null): string {
   if (!nextParam) {
     return '/dashboard'
   }

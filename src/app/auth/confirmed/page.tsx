@@ -1,6 +1,9 @@
 import Link from 'next/link'
 
-const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; title: string; text: string }> = {
+export const AUTH_CONFIRMED_STATUS_MESSAGE: Record<
+  string,
+  { tone: 'error' | 'success'; title: string; text: string }
+> = {
   success: {
     tone: 'success',
     title: 'Email Confirmed',
@@ -25,7 +28,7 @@ function readSingle(value: string | string[] | undefined): string | null {
   return Array.isArray(value) ? value[0] : value
 }
 
-function safeNextPath(path: string | null): string {
+export function safeNextPath(path: string | null): string {
   if (!path || !path.startsWith('/')) {
     return '/dashboard'
   }
@@ -40,7 +43,7 @@ export default async function AuthConfirmedPage({
   const resolvedSearchParams = await searchParams
   const statusCode = readSingle(resolvedSearchParams.status) || 'success'
   const nextPath = safeNextPath(readSingle(resolvedSearchParams.next))
-  const status = STATUS_MESSAGE[statusCode] || STATUS_MESSAGE.success
+  const status = AUTH_CONFIRMED_STATUS_MESSAGE[statusCode] || AUTH_CONFIRMED_STATUS_MESSAGE.success
 
   return (
     <main>

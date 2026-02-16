@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getUserDisplayName } from '@/lib/auth/roles'
 import { createCaseReference } from '@/lib/cases/case-ref'
-import type { BankruptcyCase } from '@/lib/cases/types'
+import type { BankruptcyCase, CaseResponse } from '@/lib/cases/types'
+import { buildTrusteeReadinessChecks, listBlockingReadinessGaps } from '@/lib/compliance/readiness'
+import { readResponseField } from '@/lib/questionnaire/payload'
+import { QUESTIONNAIRE_STEPS } from '@/lib/questionnaire/steps'
 import { assertTrustedOrigin } from '@/lib/security/origin'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
@@ -48,6 +51,28 @@ function isMissingCaseRefColumnError(error: { code?: string; message?: string } 
     code.includes('42703') ||
     (message.includes('case_ref') && message.includes('column'))
   )
+}
+
+interface CaseProgressSummary {
+  progressPercent: number
+  blockingGapCount: number
+  hasStarted: boolean
+}
+
+function summarizeCaseProgress(caseResponses: CaseResponse[]): CaseProgressSummary {
+  const completedStepCount = QUESTIONNAIRE_STEPS.filter((step) =>
+    caseResponses.some((response) => response.step_id === step.id && response.completed),
+  ).length
+
+  const progressPercent = Math.round((completedStepCount / QUESTIONNAIRE_STEPS.length) * 100)
+  const readField = (fieldKey: string): unknown => readResponseField(caseResponses, fieldKey)
+  const blockingGapCount = listBlockingReadinessGaps(buildTrusteeReadinessChecks(readField)).length
+
+  return {
+    progressPercent,
+    blockingGapCount,
+    hasStarted: caseResponses.length > 0,
+  }
 }
 
 async function createCaseAction(formData: FormData) {
@@ -171,6 +196,23 @@ export default async function DashboardPage({
     .order('updated_at', { ascending: false })
 
   const cases = ((casesRaw || []) as BankruptcyCase[]).filter((entry) => Boolean(entry.id))
+  const caseIds = cases.map((entry) => entry.id)
+
+  let caseResponses: CaseResponse[] = []
+  if (caseIds.length > 0) {
+    const { data: responsesRaw } = await supabase
+      .from('case_responses')
+      .select('case_id, step_id, payload, completed, updated_at')
+      .in('case_id', caseIds)
+    caseResponses = (responsesRaw || []) as CaseResponse[]
+  }
+
+  const responsesByCase = new Map<string, CaseResponse[]>()
+  for (const response of caseResponses) {
+    const existing = responsesByCase.get(response.case_id) || []
+    existing.push(response)
+    responsesByCase.set(response.case_id, existing)
+  }
 
   return (
     <main>
@@ -234,31 +276,44 @@ export default async function DashboardPage({
                     <th>Case ID</th>
                     <th>Case</th>
                     <th>Chapter</th>
+                    <th>Progress</th>
+                    <th>Readiness</th>
                     <th>Status</th>
                     <th>Updated</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cases.map((caseItem) => (
-                    <tr key={caseItem.id}>
-                      <td>{caseItem.case_ref || caseItem.id}</td>
-                      <td>{caseItem.title}</td>
-                      <td>{caseItem.chapter}</td>
-                      <td>{caseItem.status}</td>
-                      <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
-                      <td>
-                        <div className="row">
-                          <Link className="button-secondary" href={`/intake/${caseItem.id}`}>
-                            Continue Intake
-                          </Link>
-                          <Link className="button-secondary" href={`/review/${caseItem.id}`}>
-                            Review Packet
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                  {cases.map((caseItem) => {
+                    const summary = summarizeCaseProgress(responsesByCase.get(caseItem.id) || [])
+                    const readinessText = !summary.hasStarted
+                      ? 'Not started'
+                      : summary.blockingGapCount === 0
+                        ? 'Ready'
+                        : `${summary.blockingGapCount} blocker${summary.blockingGapCount === 1 ? '' : 's'}`
+
+                    return (
+                      <tr key={caseItem.id}>
+                        <td>{caseItem.case_ref || caseItem.id}</td>
+                        <td>{caseItem.title}</td>
+                        <td>{caseItem.chapter}</td>
+                        <td>{summary.progressPercent}%</td>
+                        <td>{readinessText}</td>
+                        <td>{caseItem.status}</td>
+                        <td>{new Date(caseItem.updated_at).toLocaleString()}</td>
+                        <td>
+                          <div className="row">
+                            <Link className="button-secondary" href={`/intake/${caseItem.id}`}>
+                              Continue Intake
+                            </Link>
+                            <Link className="button-secondary" href={`/review/${caseItem.id}`}>
+                              Review Packet
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

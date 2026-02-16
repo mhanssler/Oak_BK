@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { signInAction } from '@/app/login/actions'
 
-const STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
+export const LOGIN_STATUS_MESSAGE: Record<string, { tone: 'error' | 'success'; text: string }> = {
   missing_credentials: {
     tone: 'error',
     text: 'Enter both email and password.',
@@ -42,7 +42,7 @@ export default async function LoginPage({
 }) {
   const resolvedSearchParams = await searchParams
   const status = readSingle(resolvedSearchParams.status)
-  const message = status ? STATUS_MESSAGE[status] : null
+  const message = status ? LOGIN_STATUS_MESSAGE[status] : null
 
   return (
     <main>

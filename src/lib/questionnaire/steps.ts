@@ -645,6 +645,36 @@ export const QUESTIONNAIRE_STEPS: QuestionnaireStep[] = [
         required: true,
       },
       {
+        key: 'court_forms_sequence_validated',
+        label: 'Court form sequence validated for this chapter and district?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'creditor_matrix_reviewed',
+        label: 'Creditor matrix reviewed against disclosures and credit report?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'court_notices_calendar_synced',
+        label: 'Court notices and deadlines synced to case calendar?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'proof_of_claim_deadlines_tracked',
+        label: 'Proof-of-claim and objection deadlines tracked?',
+        type: 'boolean',
+        required: true,
+      },
+      {
+        key: 'trustee_document_portal_ready',
+        label: 'Trustee document portal upload set is ready?',
+        type: 'boolean',
+        required: true,
+      },
+      {
         key: 'meeting_341_notice_received',
         label: 'Section 341(a) meeting notice received?',
         type: 'boolean',

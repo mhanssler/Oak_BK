@@ -16,6 +16,11 @@ describe('trustee readiness checks', () => {
       liabilities_reconciled_to_credit_report: true,
       undisclosed_accounts_resolved: true,
       cm_ecf_workflow_reviewed: true,
+      court_forms_sequence_validated: true,
+      creditor_matrix_reviewed: false,
+      court_notices_calendar_synced: true,
+      proof_of_claim_deadlines_tracked: false,
+      trustee_document_portal_ready: false,
       attend_341_meeting_acknowledged: false,
       meeting_341_notice_received: false,
       debtor_education_completed: false,
@@ -26,8 +31,11 @@ describe('trustee readiness checks', () => {
 
     expect(gaps).toContain('Credit counseling certificate available')
     expect(gaps).toContain('All known credit cards/lines of credit disclosed')
+    expect(gaps).toContain('Creditor matrix reviewed')
+    expect(gaps).toContain('Trustee document portal upload set is ready')
     expect(gaps).toContain('Client acknowledges mandatory 341(a) attendance')
     expect(gaps).not.toContain('341(a) meeting notice received')
+    expect(gaps).not.toContain('Proof-of-claim and objection deadlines tracked')
     expect(gaps).not.toContain('Post-filing debtor education completed')
   })
 

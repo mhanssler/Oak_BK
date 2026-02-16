@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 const SECURE_PATH_PREFIXES = ['/dashboard', '/intake', '/review', '/admin']
 
-function isSecurePath(pathname: string): boolean {
+export function isSecurePath(pathname: string): boolean {
   return SECURE_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix))
 }
 
