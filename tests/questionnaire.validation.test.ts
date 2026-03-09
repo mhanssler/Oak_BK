@@ -1,5 +1,5 @@
 import { getQuestionnaireStep } from '@/lib/questionnaire/steps'
-import { validateStepForm } from '@/lib/questionnaire/validation'
+import { validateStepForm, validateStepPayload } from '@/lib/questionnaire/validation'
 
 describe('questionnaire validation', () => {
   it('marks required fields missing', () => {
@@ -66,4 +66,24 @@ describe('questionnaire validation', () => {
     expect(typeof result.payload.income_notes).toBe('string')
     expect((result.payload.income_notes as string).length).toBe(4000)
   })
+})
+
+
+it('validates typed JSON payloads for Hamish intake writes', () => {
+  const step = getQuestionnaireStep('filing-plan')
+  const result = validateStepPayload(step, {
+    chapter: '7',
+    filing_state: 'California',
+    california_district: 'northern',
+    filing_county: 'Alameda',
+    primarily_consumer_debts: true,
+    exemption_system: '703',
+    disabled_veteran_means_test_exception: false,
+    active_military_means_test_exception: false,
+    urgent_deadline: false,
+  })
+
+  expect(result.completed).toBe(true)
+  expect(result.payload.primarily_consumer_debts).toBe(true)
+  expect(result.payload.urgent_deadline).toBe(false)
 })

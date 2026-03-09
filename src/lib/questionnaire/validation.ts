@@ -42,6 +42,22 @@ function parseNumeric(raw: string): number | null {
   return Number(parsed.toFixed(2))
 }
 
+function normalizePayloadInput(value: unknown): string {
+  if (value === null || value === undefined) {
+    return ''
+  }
+  if (typeof value === 'string') {
+    return value.trim()
+  }
+  if (typeof value === 'boolean') {
+    return value ? 'true' : 'false'
+  }
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? String(value) : ''
+  }
+  return ''
+}
+
 function parseFieldValue(field: QuestionnaireField, raw: string): unknown {
   if (!raw) {
     return null
@@ -88,6 +104,31 @@ export function validateStepForm(
 
   for (const field of step.fields) {
     const rawText = normalizeText(formData.get(field.key))
+    const parsedValue = parseFieldValue(field, rawText)
+    payload[field.key] = parsedValue
+
+    if (field.required && isMissingRequired(parsedValue)) {
+      missingRequiredFields.push(field.key)
+    }
+  }
+
+  return {
+    payload,
+    missingRequiredFields,
+    completed: missingRequiredFields.length === 0,
+  }
+}
+
+
+export function validateStepPayload(
+  step: QuestionnaireStep,
+  values: Record<string, unknown>,
+): StepValidationResult {
+  const payload: Record<string, unknown> = {}
+  const missingRequiredFields: string[] = []
+
+  for (const field of step.fields) {
+    const rawText = normalizePayloadInput(values[field.key])
     const parsedValue = parseFieldValue(field, rawText)
     payload[field.key] = parsedValue
 

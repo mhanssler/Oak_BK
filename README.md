@@ -71,3 +71,28 @@ npm run security:scan
 
 ## Current Limitation
 The local `Reference/Requirements..gdoc` file is a cloud placeholder and is not readable from this environment. Export that document as `.md` or `.txt` into the repo to map attorney language directly into final questionnaire wording and trustee packet format.
+
+
+## Hamish Intake API
+Use the server-only Hamish intake route when OpenClaw needs to create or update bankruptcy intake records from a phone or chat conversation.
+
+Required server environment variables:
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `HAMISH_API_TOKEN`
+- `HAMISH_CASE_OWNER_USER_ID`
+
+Route contract:
+- `GET /api/hamish/intake`
+  - Requires `Authorization: Bearer <HAMISH_API_TOKEN>`
+  - Returns questionnaire steps and operator guidance for Hamish
+- `POST /api/hamish/intake`
+  - Requires `Authorization: Bearer <HAMISH_API_TOKEN>`
+  - Creates or resolves a case and upserts one questionnaire step into Supabase
+
+Design notes:
+- Hamish is an office intake professional, not a lawyer.
+- The route is server-only and intended for Vercel deployment.
+- Cases created by Hamish are owned by the configured office/admin user so staff can review them immediately in the secure admin UI.
+- All writes are validated against the existing questionnaire schema and logged in `case_audit_events`.
+- `GET /api/hamish/intake` now also returns a structured behavior profile, question hints, and a ready-to-use system prompt for OpenClaw.
+- See `docs/hamish-agent-behavior.md` for the human-readable behavior contract.
